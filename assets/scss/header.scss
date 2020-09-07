@@ -1,0 +1,22 @@
+.navbar {
+  background-color: antiquewhite;
+  * {
+    color: #2b2219;
+  }
+}
+#menu {
+  background-color: #6e6e6e;
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  li {
+    color: #fff;
+    line-height: 43px;
+
+    &.active {
+      background-color: #dd4519;
+    }
+  }
+}

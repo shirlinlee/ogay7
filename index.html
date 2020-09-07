@@ -12,6 +12,7 @@
     <base href="" >
     <!-- <link rel="stylesheet" href="assets/css/all.css"> -->
     <link rel="stylesheet" href="assets/css/index.css">
+    
     <script src="assets/js/jquery-3.4.1.min.js"></script>
     <script src="assets/js/bootstrap4/popper.min.js"></script>
     <script src="assets/js/vue/vue.js"></script>
@@ -43,32 +44,86 @@
         <img src="assets/images/loading.svg" alt="" width=30 height=30>
     </div>
     <div id="wrapper bg-white">
-        <div class="container pt-2 pb-2">
-            <nav class="navbar navbar-expand navbar-light d-flex justify-content-between">
-                <a href="./" class="navbar-brand"><h1 class="m-0"><img class="img-fluid" src="assets/images/logo.png" alt=""></h1></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent" style="flex-grow: unset;">
-                    <!-- <form class="form-inline d-none d-lg-inline-block" id="site_search">
-                        <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search" id="form_search">
-                        <button class="btn" type="submit" id="form_submit"><i class="fas fa-search"></i></button>
-                    </form> -->
-                    <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
-                        <div class="p-2 pl-lg-4 bd-highlight">
-                            <span class="d-none d-lg-inline-block">購物車 / </span><span class="text-warning" id="price_in_cart">$0</span>
-                            <a href="cart"><i class="fas fa-shopping-cart"></i></a>
-                        </div>
-                        <div class="p-2 bd-highlight">
-                            <a href="favorite"><i class="fab fa-gratipay"></i></a>
-                        </div>
-                        <div class="p-2 bd-highlight">
-                            <a href="mc_order"><i class="fas fa-user-circle"></i></a>
+        <!-- 以下header開始 -->
+        <header>
+            <div class="container">
+                <nav class="navbar navbar-expand navbar-light d-flex justify-content-between">
+                    <a href="./" class="navbar-brand"><img class="img-fluid" src="assets/images/logo.png" alt=""></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent" style="flex-grow: unset;">
+                        <form class="form-inline d-none d-lg-inline-block" id="site_search">
+                            <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search" id="form_search">
+                            <button class="btn" type="submit" id="form_submit"><i class="fas fa-search"></i></button>
+                        </form>
+                        <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
+                            <div class="p-2 pl-lg-4 bd-highlight">
+                                <span class="d-none d-lg-inline-block">購物車 / </span><span class="text-warning" id="price_in_cart">$0</span>
+                                <a href="cart"><i class="fas fa-shopping-cart d-none"></i></a>
+                            </div>
+                            <div class="p-2 bd-highlight">
+                                <a href="favorite"><i class="fab fa-gratipay d-none"></i><span class="d-md-block">追蹤清單</span></a>
+                                
+                            </div>
+                            <div class="p-2 bd-highlight">
+                                <a href="mc_order"><i class="fas fa-user-circle d-none"></i><span class="d-md-block">帳戶管理</span></a>
+                                
+                            </div>
                         </div>
                     </div>
-                </div>
-            </nav>
-        </div> 
+                </nav>
+            </div> 
+            <div id="menu">
+                <ul class="container">
+                    <li class="d-inline-block" v-for="(item, index) in main_list" :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
+                </ul>
+            </div>
+            <link rel="stylesheet" href="assets/css/header.css">
+            <script>
+                var wrapper = new Vue({
+                el : '#menu',
+                data : {
+                    main_list: null,
+                    sub_list: null,
+                    extra_list: null,
+                    current_main_menu: 0,
+                    current_sub_menu: 0,
+                    current_extra_menu: 0,
+
+                },
+                mounted() {
+                    this.$nextTick(() => {
+                        this.loadMenu();
+                    })
+                },
+                methods : {
+                    loadMenu (){
+                        const main = axios.get("assets/json/find_main_list.json");
+                        const sub = axios.get("assets/json/find_sub_list.json");
+                        const extra = axios.get("assets/json/find_extra_list.json");
+
+                        axios.all([main, sub, extra]).then(axios.spread((...responses) => {
+                            const { data: main_list} = responses[0];
+                            const { data: sub_list} = responses[1];
+                            const { data: extra_list} = responses[2];
+                            this.main_list = main_list;
+                            this.sub_list = sub_list;
+                            this.extra_list = extra_list;
+                        })).catch(errors => {
+                            console.error(errors);
+                            // react on errors.
+                        })
+                        
+                    },
+                }
+            })
+            </script>
+        </header>
+
+        <!-- 以下header結束 -->
+
+       
         <!-- 以下為php $path loading範圍 -->
         <div id="layoutWrapper">
             
@@ -81,7 +136,7 @@
                         </div>
                     </div>
                     <!-- {{indexData.slides.datalist}} -->
-                    <div class="carousel-item" :class="{'active': idx == 0 , 'd-none' : carouselClose }" :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData.slides.datalist">
+                    <div class="carousel-item" ""{'active': idx == 0 , 'd-none' : carouselClose }" :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData.slides.datalist">
                         <div :style="{ 'background-color' : slide.bgcolor }">
                             <div class="container">
                                 <!-- pc -->
@@ -472,129 +527,6 @@
                         // 呼叫商品列表
                         // _this.product_list()
                     }
-                },
-                list_main : function(callback){
-                    var _this = this;
-                    axios({
-                        method : 'post',
-                        url : 'api_category/find_main_list',
-                        responseType : 'json', 
-                    }).then(function(data){
-                        // console.log(data)
-                        if( data.status == 200 ){
-                            _this.category.main = data.data;
-                            // var _length = _this.category.main.length-1;
-                            // _this.selectedIdx.main = allFunc.randomFunc(0,_length);
-                            callback();
-                        }else{
-                        }
-                        console.log("!:")
-                        _this.close = {
-                            sub : false,
-                            extra : true
-                        }
-                    })
-                },
-                list_sub : function(categroy){
-                    var _this = this;
-                    axios({
-                        method : 'get',
-                        url : './api_category/find_sub_list',
-                        responseType : 'json', 
-                        params : {
-                            category_id : categroy
-                        }
-                    }).then(function(data){
-                        // console.log(data)
-                        if( data.status == 200 ){
-                            _this.category.sub = data.data;
-                            console.log("_this.category.sub.length")
-                            console.log(_this.category.sub.length)
-                            if( _this.category.sub.length == 0 ){
-                                _this.close = {
-                                    sub : true,
-                                    extra : true
-                                }
-                            }else{
-                                _this.close = {
-                                    sub : false,
-                                    extra : true
-                                }
-                            }
-                            // _this.close = {
-                            //     sub : false,
-                            //     extra : false
-                            // }
-                        }else{
-                        }
-                    })
-                },
-                list_extra : function(categroy){
-                    var _this = this;
-                    axios({
-                        method : 'get',
-                        url : 'api_category/find_extra_list',
-                        responseType : 'json',
-                        params : {
-                            category_sub_id : categroy
-                        }
-                    }).then(function(data){
-                        // console.log(data)
-                        if( data.status == 200 ){
-                            _this.category.extra = data.data;
-                            // if( _this.category.extra.length == 0 ){
-                            //     console.log("a")
-                            //     _this.close = {
-                            //         sub : false,
-                            //         extra : false
-                            //     }
-                            // }else{
-                            //     console.log("b")
-                            //     console.log(_this.category.extra.length)
-                            //     _this.close = {
-                            //         sub : false,
-                            //         extra : true
-                            //     }
-                            // }
-                            _this.close = {
-                                sub : false,
-                                extra : false
-                            }
-                        }else{
-                        }
-                    })
-                },
-                callSub : function(callTarget,getId,getName){
-                    var _this = this;
-                    // 改變active狀態並呼叫商品
-                    switch( callTarget ){
-                        case "sub":
-                            // 點擊main，呼叫sub
-                            _this.list_sub(getId);
-                            _this.category['sub'] = undefined;
-                            _this.category['extra'] = undefined;
-                            _this.category.active['sub'] = undefined;
-                            _this.category.active['extra'] = undefined;
-                            _this.category.active['main'] = getId;
-                            window.history.pushState({},0,'category' + '?category_id=' + getId);
-                        break;
-                        case "extra":
-                            // 點擊sub，呼叫extra
-                            _this.list_extra(getId)
-                            _this.category.active['sub'] = getId;
-                            _this.category.active['extra'] = undefined;
-                            _this.category['extra'] = undefined;
-                            _this.category.active['sub'] = getId;
-                            window.history.pushState({},0,'category' + '?category_id=' + _this.category.active['main'] + '&category_sub_id=' + getId );
-                        break;
-                        case "final":
-                            // 點擊extra，加上active
-                            window.history.pushState({},0,'category' + '?category_id=' + _this.category.active['main'] + '&category_sub_id=' + _this.category.active['sub'] + '&category_extra_id=' + getId );
-                            _this.category.active['extra'] = getId
-                        break;
-                    }
-                    // 呼叫商品列表
-                    _this.product_list()
                 },
                 feature_product : function(){
                     var _this = this;

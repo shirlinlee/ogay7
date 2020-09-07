@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>首頁</title>
+
+    <!-- php lib -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/js/bootstrap4/bootstrap.css">
+    <base href="" >
+    <!-- <link rel="stylesheet" href="assets/css/all.css"> -->
+    <link rel="stylesheet" href="assets/css/index.css">
+    <script src="assets/js/jquery-3.4.1.min.js"></script>
+    <script src="assets/js/bootstrap4/popper.min.js"></script>
+    <script src="assets/js/vue/vue.js"></script>
+    <script src="assets/js/vue/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
+    <script src="assets/js/bootstrap4/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/0e1a09a8fc.js" crossorigin="anonymous"></script>
+    <script src="assets/js/allfunc.js"></script> 
+
+    <!-- php lib -->
+    <style>
+    .loader_inner_wrapper{
+        position :fixed;
+        z-index: 99999;
+        width: 100%;
+        height : 100%;
+        background : transparent;
+    }
+    .loader_inner_wrapper img{
+        position: absolute;
+        top : 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+    </style>
+</head>
+<body>
+    <div class="loader_inner_wrapper text-center d-none" id="st_loading">
+        <img src="assets/images/loading.svg" alt="" width=30 height=30>
+    </div>
+    <div id="wrapper bg-white">
+        <div class="container pt-2 pb-2">
+            <nav class="navbar navbar-expand navbar-light d-flex justify-content-between">
+                <a href="./" class="navbar-brand"><h1 class="m-0"><img class="img-fluid" src="assets/images/logo.png" alt=""></h1></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent" style="flex-grow: unset;">
+                    <!-- <form class="form-inline d-none d-lg-inline-block" id="site_search">
+                        <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search" id="form_search">
+                        <button class="btn" type="submit" id="form_submit"><i class="fas fa-search"></i></button>
+                    </form> -->
+                    <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
+                        <div class="p-2 pl-lg-4 bd-highlight">
+                            <span class="d-none d-lg-inline-block">購物車 / </span><span class="text-warning" id="price_in_cart">$0</span>
+                            <a href="cart"><i class="fas fa-shopping-cart"></i></a>
+                        </div>
+                        <div class="p-2 bd-highlight">
+                            <a href="favorite"><i class="fab fa-gratipay"></i></a>
+                        </div>
+                        <div class="p-2 bd-highlight">
+                            <a href="mc_order"><i class="fas fa-user-circle"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div> 
+        <!-- 以下為php $path loading範圍 -->
+        <link rel="stylesheet" href="assets/js/smoothproducts/css/smoothproducts.css">
+        <style>
+        .sp-wrap {
+            margin: 0;
+            max-width: none;
+            border: 0;
+            border-radius: 0;
+        }
+        .sp-thumbs{
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .sp-thumbs a{
+            margin-left : 5px;
+            margin-right: 5px;
+        }
+        </style>
+        <div id="layoutWrapper">
+
+            <div id="carouselIndexCaptions" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item-fake" id="carousel-fake">
+                        <div class="container">
+                            <img class="d-none d-md-block img-fluid" src="assets/images/carousel_wrapper.png" alt="">
+                            <img src="assets/images/m-sample.png" class="d-xs-block d-md-none  img-fluid" alt="">
+                        </div>
+                    </div>
+                    <!-- {{indexData.slides.datalist}} -->
+                    <div class="carousel-item" :class="{'active': idx == 0 , 'd-none' : carouselClose }" :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData.slides.datalist">
+                        <div :style="{ 'background-color' : slide.bgcolor }">
+                            <div class="container">
+                                <!-- pc -->
+                                <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block" rel="noopener noreferrer">
+                                    <img :src="slide.img_src_pc" class="d-block w-100" :alt="slide.subject">
+                                </a>
+                                <!-- m -->
+                                <a :href="slide.target_link" rel="noopener noreferrer" :target="slide.target" class="d-xs-block d-md-none"><img :src="slide.img_src_m" class="d-block w-100" alt=""></a>
+                                <!-- <a :href="slide.target_link" class="d-xs-block d-md-none"><img :src="slide.img_src" class="d-block w-100" :alt="slide.subject"></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselIndexCaptions" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselIndexCaptions" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+
+            <div class="container">
+                <div class="row no-gutters">
+                    <div class="col-12 col-lg-2">
+                        <div class="d-xs-block d-md-none pt-3">
+                            <div class="p-3 border-bottom">
+                                <div class="float-right" @click="toggleCategory">
+                                    <small class="mr-1">{{category.close.txt}}</small>
+                                    <i class="fas" :class="category.close.class"></i>
+                                </div>
+                                <p class="text-dark d-inline" style="width:100px">分類</p>
+                            </div>
+                        </div>
+                        <nav class="leftCatalog pb-3 d-md-block" :class="{'d-none' : category.close.isClose }">
+                            <div class="container pt-2 pb-2">
+                                <div id="left_menu">
+                                    <ul class="left_first_ul">
+                                        <li class="nav-item left_first_title" :class="{'active' : itema.category_id == category.active.main.id }" v-for="(itema,idx) in category.left_menu.main">
+                                            <a class="nav-level1-active"
+                                                :data-thisid="itema.category_id" 
+                                                href=""
+                                                @click.prevent="callSub('sub',itema.category_id,itema.category_name)"
+                                            >
+                                                {{itema.category_name}}
+                                            </a> 
+                                            <!-- sub -->
+                                            <template v-if="category.left_menu.sub.length > 0 && itema.category_id == category.active.main.id ">
+                                                <ul class="left_second_ul">
+                                                    <li class="nav-item left_second_title"><a :href="'category?category_id=' + itema.category_id">全部商品</a></li>
+                                                    <li class="nav-item left_second_title" 
+                                                        v-for="(itemb,idx) in category.left_menu.sub" 
+                                                        :class="{'active' : itemb.category_sub_id == category.active['sub'].id }"
+                                                    >
+                                                        <a href="" @click.prevent="callSub('extra',itemb.category_sub_id,itemb.category_sub_name)" class="nav-level2-active">{{itemb.category_sub_name}}</a>
+                                                        <!-- extra -->
+                                                        <template v-if="category.left_menu.extra.length > 0 && itemb.category_sub_id == category.active.sub.id">
+                                                            <ul class="left_third_ul">
+                                                                <li class="nav-item left_third_title">
+                                                                    <a :href="'category?category_id=' + itema.category_id + '&category_sub_id=' + itemb.category_id">全部商品</a>
+                                                                </li>
+                                                                <li class="nav-item left_third_title" v-for="(itemc,idx) in category.left_menu.extra" :class="{'active' : itemc.category_extra_id == category.active['extra'].id }">
+                                                                    <a :href="'category?category_id=' + itema.category_id + '&category_sub_id=' + itemb.category_sub_id + '&category_extra_id=' + itemc.category_extra_id">{{itemc.category_extra_name}}</a>
+                                                                </li>
+                                                            </ul>
+                                                        </template>
+                                                    </li>
+
+                                                </ul>
+                                            </template>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="col-12 col-lg-10">
+                        <nav aria-label="breadcrumb" class="breadcrumb-wrapper mt-4 mb-4">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#">首頁</a></li>
+                                <li class="breadcrumb-item" 
+                                    :class="{'active' : idx == 'extra'}" 
+                                    v-for="(item,idx) in category.output">
+                                        <template v-if="idx == 'main'">
+                                            <a :href="'category?category_id='+ item.id">{{item.name}}</a>
+                                        </template>
+                                        <template v-else-if="idx == 'sub'">
+                                            <a 
+                                            :href="'category?category_id='+ category.output['main'].id + '&category_sub_id=' + item.id">{{item.name}}</a>
+                                        </template>
+                                        <template v-else="idx == 'extra'">
+                                            <a 
+                                            :href="'category?category_id='+ category.output['main'].id + '&category_sub_id=' + category.output['sub'].id + '&category_extra_id=' + item.id"
+                                            >{{item.name}}</a>
+                                        </template>
+                                </li>
+                            </ol>
+                        </nav>
+                        <div class="row no-gutters">
+                            <div class="col-12 col-md-12 col-lg-7 text-center" style="background:#eee">
+                                <div class="sp-wrap">
+                                    
+                                    <!-- 此處原為 https://github.com/kthornbloom/Smoothproducts 的商品輪播
+                                         資料來源請參照product.json底下product_img_array -->
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 col-lg-5 bg-light">
+                                <div class="show_price pt-2 pl-4 pr-4 pb-2">
+                                    <h2 class="product_h2">商品名稱</h2>
+                                    <p class="product_info">喝的頂級保養品！輕鬆喝出女神光！ ★日本專利【金絲燕窩酸】與豐富表皮生長因子 ★小分子【蠶絲蛋白胜肽】效果超越膠原蛋白 ★西班牙專利【玻尿酸】強化保水、有感Ｑ彈 ★多項專利成份，多重檢驗標章 ★金絲燕窩酸榮獲日本專利流感抑制劑與美肌促進劑專利 ★老人、小孩、孕婦都適合飲用的科技保健品</p>
+                                    <hr>
+                                    <p class="pa_desc text-warning m-0">超值特價<small class="text-muted ml-1">原價<del>$5400</del> 現省2430</small></p>
+                                    <div class="product_price_area mb-3">
+                                        
+                                        <h1 class="pa_price d-inline text-warning">$2970</h1>
+                                        
+                                    </div>
+                                    <button :class="{'btn-outline-secondary': !favorite , 'btn-secondary' : favorite }" class="mb-2 btn btn-block" @click.prevent="switchFavorite">
+                                        <i class="fa-heart" :class="{'far': !favorite , 'fas' : favorite }" aria-hidden="true"></i>
+                                        加入最愛
+                                    </button>
+                                    <div class="btn-group btn-select btn-block mb-3">
+                                        <button type="button" class="btn-outline-secondary qty_change" @click="change_qty('less')">-</button>
+                                        <input type="text" class="text-center form-control d-inline" v-model="qty.value" style="vertical-align:middle;border-color:#CBCBCB" id="want_qty">
+                                        <button type="button" class="btn-outline-secondary qty_change" @click="change_qty('add')">+</button>
+                                    </div>
+                                    <div class="row no-gutters pb-2">
+                                        <div class="col-6 pr-1">
+                                            <a href="#" class="btn btn-warning btn-lg btn-block in_cart to_cart_page">直接購買</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <a href="#" class="btn btn-info btn-lg btn-block in_cart">加入購物車</a>
+                                        </div>
+                                    </div>
+                                    <!-- <p class="text-warning pa_desc text-center mt-2">已搶購299</p> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="index-banner mt-3 mb-1">
+                            <template v-for="(item,key,idx) in indexData.banner.datalist">
+                                <a :href="item.target_link" :target="item.target" class="d-none d-md-block" rel="noopener noreferrer"><img :src="item.img_src_pc" alt="" class="img-fluid"></a>
+                            </template>
+                        </div>
+                        <div class="row no-gutters">
+                            <!-- <div class="col-12 col-lg-9" id="product_intro_area"> -->
+                            <div class="col-12 col-lg-12" id="product_intro_area">
+                                <div class="product-info-detail">
+                                    <h4 class="product-inside-title">詳細介紹</h4>
+                                    <div class="pid-txt">
+                                    <!-- 此處資料來源請參照product.json底下product_full_info -->
+                                    </div>
+                                </div>
+                                <div class="product-info-detail">
+                                    <h4 class="product-inside-title">詳細規格</h4>
+                                    <div class="pid-txt">
+                                        <!-- 此處資料來源請參照product.json底下product_full_spec' -->
+                                    </div>
+                                </div>
+                                <div class="product-info-detail">
+                                    <h4 class="product-inside-title">物流說明</h4>
+                                    <div class="pid-txt">
+                                        <!-- 此處資料來源請參照product.json底下product_logistics_info' -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            
+            <!-- footer php include -->
+            <div id="footer">
+                    <div class="container mt-5 pt-5 clearfix">
+                        <div class="index-for5 mb-5">
+                            <h2 class="mb-3">關於我們</h2>
+                            <ul>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">7YAGO福利網</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">招募供應商</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">機構團體加入</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-for5 mb-5">
+                            <h2 class="mb-3">專屬服務</h2>
+                            <ul>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">大宗採購方案</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">年節禮品採購</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">異業合作</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-for5 mb-5">
+                            <h2 class="mb-3">會員權益</h2>
+                            <ul>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">隱私權政策</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">電子商務條款</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-for5 mb-5">
+                            <h2 class="mb-3">常見問題</h2>
+                            <ul>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">訂單出貨流程說明</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">取消訂單/退貨/退款說明</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">購物金使用說明</a></li>
+                                <li><a href="http://" target="_blank" rel="noopener noreferrer">聯絡我們</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-for5 mb-5">
+                            <h2 class="mb-3">隨身好助理</h2>
+                            <img src="assets/images/qrcode.png" alt="" class="img-fluid w-75">
+                        </div>
+                    </div>
+                    <div class="text-center pb-3">
+                        <p class="m-0"><small>吉品養生股份有限公司 2020 ALL Rights Reserved</small></p>
+                        <p><small class="m-0">台北市忠孝東路四段212號10樓。客服信箱：service@yonglinfarm.net</small></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script type="text/javascript" src="assets/js/smoothproducts/js/smoothproducts.min.js"></script>
+
+        <script>
+            var wrapper = new Vue({
+                el : '#layoutWrapper',
+                data : {
+                    slides : '',
+                    indexData : {
+                        slides : '',
+                        banner : ''
+                    },
+                    carouselClose : true,
+                    category : {
+                        close : {
+                            txtArr : ['收起','展開'],
+                            classArr : ['fa-angle-up','fa-angle-down'],
+                            txt : '展開',
+                            class : 'fa-angle-down',
+                            isClose : true
+                        },
+                        pre : {
+                            main : { 
+                                id : "<?=$product['category_id']?>",
+                                name : "<?=$product['category_name']?>"
+                            },
+                            sub : { 
+                                id : "<?=$product['category_sub_id']?>",
+                                name : "<?=$product['category_sub_name']?>"
+                            },
+                            extra : { 
+                                id : "<?=$product['category_extra_id']?>",
+                                name : "<?=$product['category_extra_name']?>"
+                            },
+                        },
+                        output : {},
+                        left_menu : {
+                            main : '',
+                            sub : '',
+                            extra : ''
+                        },
+                        active : {
+                            main : '',
+                            sub : '',
+                            extra : ''
+                        }
+                    },
+                    favorite : "<?=$product['favorite']?>",
+                    qty : {
+                        value : 1
+                    }
+                },
+                mounted() {
+                    var _this = this;
+                    _this.index();
+                    // 整理分類
+                    for( prex in _this.category.pre ){
+                        // console.log(_this.category.pre[prex].id == "")
+                        if( _this.category.pre[prex].id == "" || _this.category.pre[prex].id == undefined ){}else{
+                            _this.category.output[prex] = _this.category.pre[prex];
+                            _this.category.active[prex] = _this.category.pre[prex];
+                        }
+                    }
+
+                    // 整理完執行選單api
+                    _this.list_main();
+                    // 如果sub在：呼叫sub跟extra
+                    // 如果sub不在：呼叫sub
+                    console.log(_this.category.output["sub"])
+                    // if( _this.category.output["sub"] == undefined ){}else{
+                    //     _this.list_sub(_this.category.output["main"].id);
+                    // }
+                    // if( _this.category.output["extra"] == undefined ){}else{
+                    //     _this.list_extra(_this.category.output["sub"].id);
+                    // }
+                    if( _this.category.output["sub"] == undefined || _this.category.output["sub"] == null ){
+                        // 如果sub不在
+                        _this.list_sub(_this.category.output["main"].id);
+                    }else{
+                        // 如果sub在
+                        _this.list_sub(_this.category.output["main"].id);
+                        _this.list_extra(_this.category.output["sub"].id);
+                    }
+                },
+                methods : {
+                    index : function(){
+                        var _this = this;
+                        axios({
+                            method : 'post',
+                            url : './assets/json/index.json',
+                            responseType : 'json', 
+                        }).then(function(data){
+                            if( data.status == 200 ){
+                                _this.indexData = data.data;
+                                console.log(data.data)
+                                console.log(_this.indexData.slides)
+                                _this.carouselClose = false
+                                $("#carousel-fake").addClass("d-none")
+                            }else{
+                            }
+                        })
+                    },
+                    toggleCategory : function(){
+                        var _this = this;
+                        if( _this.category.close.isClose ){
+                            _this.category.close.txt = _this.category.close.txtArr[0];
+                            _this.category.close.class = _this.category.close.classArr[0];
+                            _this.category.close.isClose = false
+                        }else{
+                            _this.category.close.txt =  _this.category.close.txtArr[1];
+                            _this.category.close.class = _this.category.close.classArr[1];
+                            _this.category.close.isClose = true;
+                        }
+                    },
+                    slide : function(){
+                        // console.log("!")
+                        var _this = this;
+                        axios({
+                            method : 'post',
+                            url : './api_ad/get_list',
+                            responseType : 'json', 
+                        }).then(function(data){
+                            if( data.status == 200 ){
+                                _this.slides = data.data;
+                                // console.log(_this.random_get)
+                                _this.carouselClose = false
+                                $("#carousel-fake").addClass("d-none")
+                            }else{
+                            }
+                        })
+                    },
+                    change_qty : function(type){
+                        var _this = this;
+                        if( type == "add" ){
+                            _this.qty.value++
+                        }else{
+                            if( _this.qty.value != 1 ){
+                                _this.qty.value--
+                            }
+                        }
+                    },
+                    switchFavorite : function(){
+                        var _this = this;
+                        axios({
+                            method : 'post',
+                            url : './api_member/switch_favourite',
+                            responseType : 'json', 
+                            data : Qs.stringify({
+                                product_id : "<?=$product['product_id']?>"
+                            })
+                        }).then(function(data){
+                            if( data.data.sys_code == "200" ){
+                                // console.log(data.data)
+                                _this.favorite = data.data.favourite
+                                // console.log(data.data.favourite)
+                            }else{
+                            }
+                        })
+                        
+                    },
+                    list_main : function(callback){
+                        var _this = this;
+                        axios({
+                            method : 'post',
+                            url : 'assets/js/find_main_list',
+                            responseType : 'json', 
+                        }).then(function(data){
+                            // console.log(data)
+                            if( data.status == 200 ){
+                                _this.category.left_menu.main = data.data;
+                                // var _length = _this.category.main.length-1;
+                                // console.log(_this.category)
+                                // callback();
+                            }else{
+                            }
+                        })
+                    },
+                    list_sub : function(categroy){
+                        // console.log(categroy)
+                        var _this = this;
+                        axios({
+                            method : 'get',
+                            url : 'assets/jn/find_sub_list',
+                            responseType : 'json', 
+                            params : {
+                                category_id : categroy
+                            }
+                        }).then(function(data){
+                            // console.log(data.data)
+                            if( data.status == 200 ){
+                                _this.category.left_menu.sub = data.data;
+                            }else{
+                            }
+                        })
+                    },
+                    list_extra : function(categroy){
+                        var _this = this;
+                        axios({
+                            method : 'get',
+                            url : 'assets/js/find_extra_list',
+                            responseType : 'json',
+                            params : {
+                                category_sub_id : categroy
+                            }
+                        }).then(function(data){
+                            // console.log(data)
+                            if( data.status == 200 ){
+                                _this.category.left_menu.extra = data.data;
+                            }else{
+                            }
+                        })
+                    },
+                    
+                    callSub : function(target,getId,getName){
+                        var _this = this;
+                        var _activeChange = ''; //更改目前active的項目
+                        if( target == "sub" ){
+                            _this.list_sub(getId);
+                            _activeChange = 'main'
+                        }else{
+                            _this.list_extra(getId)
+                            _activeChange = 'sub'
+                        }
+                        _this.category.active[_activeChange] = {
+                            id : getId,
+                            name : getName
+                        }
+                    }
+                }
+            })
+        </script>
+        <script>
+        $(function(){
+            $('.sp-wrap').smoothproducts();
+            $('body').on('click','.in_cart',function(){
+                var next = '';
+                if($(this).hasClass('to_cart_page')){
+                console.log("!")
+                    next = 'cart'
+                }
+                insert_cart(next);
+                return false;
+            })
+            // 加入購物車
+            function insert_cart(next){
+                var api = "./api_cart/insert";
+                // var product_id = '<?=$product['product_id']?>';
+                var qty = $("#want_qty").val();
+                $.post(api,{
+                    product_id:product_id,
+                    qty:qty
+                },function(data){ 
+                    // console.log(data);
+                    if(data.sys_code == '200'){
+                        alert("商品已加入購物車");
+                        if(next == 'cart'){
+                            location.href = './cart/?buy=true';
+                        }
+                    }
+                
+                    $("#price_in_cart").text("$"+data.total_price);
+                },'json')
+            }
+
+            
+            
+        })
+        </script>
+         
+        <!-- 以上為php $path loading範圍 -->
+    </div>
+</body>
+</html>

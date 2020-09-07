@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/js/bootstrap4/bootstrap.css">
+    <script src="assets/js/jquery-3.4.1.min.js"></script>
+    <script src="assets/js/bootstrap4/bootstrap.min.js"></script>
+    <title>切版項目</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <ul>
+            <li>小萬專用測試機：<a href="https://7yagofull.foso.tw/outsource/product.html">https://7yagofull.foso.tw/outsource/xxxxx.html</a>
+            
+            <div>
+                {
+                    "name": "My Server",
+                    "host": "7yagofull.foso.tw",
+                    "protocol": "sftp",
+                    "port": 22,
+                    "username": "james",
+                    "password": "James0719Wolf",
+                    "remotePath": "/var/www/html/foso/7yagofull/outsource",
+                    "uploadOnSave": true
+                }
+            </div>
+            </li>
+            
+            <li><a href="https://www.7yago.com.tw/category?category_id=main-3c">正式機</a>，一些可用的html可參考</li>
+        </ul>
+        <h1>主要目標：</h1>
+            <ol>
+                <li>首頁</li>
+                <li>商品頁</li>
+                <li>選單</li>
+            </ol>
+        <h1>一些提醒：</h1>
+            <ol>
+                <li>css-bootstrap，有任何css更新，請做在index.scss</li>
+                <li>vue，很單純的vue，請把選單跟內容分開宣告，因為選單日後會被拆到php的include去使用<br>
+                    意即頁面上會有<br>
+                    var menu = new Vue({el:"#menu"})<br>
+                    var contect = new Vue({el:"#contect"})<br>
+                    這樣拆開的東西
+                </li>
+                <li>index.html、product.html，是現存版本的php組裝回來變成html了，對你來說參考價值應該只剩一些元件跟meta裡面的東西，不用太拘泥，有一些加入最愛等function到時切版玩回來都會在重串，所以只要考慮切版問題就好</li>
+                <li>pc跟m版的切換，請使用bootstrap以下的class進行控制
+                    <p class="m-0">請縮放看下面pc版div</p>
+                    <div class="d-none d-md-block bg-light mb-3">pc版會顯示</div>
+                    <p class="m-0">請縮放看下面m版div</p>
+                    <div class="d-xs-block d-md-none bg-light">m版會顯示</div>
+                    不用特地自己寫
+                </li>
+            </ol>
+        <h1>JSON檔案</h1>
+        <ol>
+            <li>首頁用index.json，照manson順序編排下來，有6個區塊，四種樣式</li>
+            <li>請把這四種樣式請做成component，分別為：head-slider、slide、tab-style-1、tab-style-2，日後能透過index.json內的type去判斷要出現哪種樣式</li>
+            <li>block_id、tab_id、row_id不用理會，是後台用的識別</li>
+            <li>product.json是商品頁用，這份檔案資料進來後，請encode urlcode再用</li>
+            <li>選單json為
+                <ol>
+                    <li>主選單：find_main_list.json</li>
+                    <li>子選單：find_sub_list.json</li>
+                    <li>其他選單：find_extra_list.json</li>
+                </ol>
+                目前的邏輯是，頁面loading進來>>呼叫主選單、點擊主選單>>呼叫子選單、點擊子選單>>呼叫其他選單，都是點擊以後，才會得知下一層選單，可以從正式機的這個網址 <br>https://www.7yago.com.tw/category?category_id=main-3c ，去看看呼叫的方式<br>
+                附件中的json檔為<br>
+                子選單：族群保健(亦即使用者在主選單點擊了族群保健，子選單出現族群保健底下項目)<br>
+                其他選單：女仕保健(亦即使用者在其他選單點擊了女仕保健，其他選單出現女仕保健底下項目)<br>
+            </li>
+        </ol>
+        <h1>其他</h1>
+        <ol>頁面有loading樣式可用，只是請用原始js操控他，不要寫進vue的data控制</ol>
+    </div>
+</body>
+</html>

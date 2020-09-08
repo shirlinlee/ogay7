@@ -1,31 +1,93 @@
-.navbar {
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 800;
+}
+
+header .navbar {
   background-color: antiquewhite;
 }
 
-.navbar * {
+header .navbar * {
   color: #2b2219;
 }
 
-#menu {
+header #menu {
   background-color: #6e6e6e;
+  font-size: 14px;
+  overflow: visible;
+  height: 43px;
 }
 
-#menu ul {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
+header #menu .container {
+  overflow: scroll;
+  position: relative;
 }
 
-#menu li {
+header #menu ul.main_menu {
+  padding: 0;
+  margin-bottom: 0;
+}
+
+header #menu ul.main_menu li {
   color: #fff;
   line-height: 43px;
+  width: 80px;
+  text-align: center;
 }
 
-#menu li.active {
+header #menu ul.main_menu li.active {
   background-color: #dd4519;
+}
+
+@media (min-width: 992px) {
+  header #menu ul.main_menu li:hover {
+    background-color: #dd4519;
+  }
+}
+
+header #sub_menu {
+  position: absolute;
+  background-color: #eee;
+  padding: 25px 80px;
+  display: none;
+}
+
+header #sub_menu.show {
+  display: block;
+}
+
+header #sub_menu ul {
+  font-size: 14px;
+  width: 140px;
+  text-indent: 6px;
+  min-height: 100px;
+  vertical-align: top;
+  margin-right: 40px;
+}
+
+header #sub_menu h4 {
+  font-size: 14px;
+  color: #dd4519;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: #dd4519 1px solid;
+}
+
+header #sub_menu li {
+  font-size: 14px;
+  color: #838383;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  text-align: left;
+  list-style-type: none;
+}
+
+@media (min-width: 992px) {
+  header #sub_menu li a:hover {
+    color: #dd4519;
+  }
 }
 /*# sourceMappingURL=header.css.map */

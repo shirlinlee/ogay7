@@ -609,12 +609,15 @@ option {
   color: #dd4519;
 }
 
-@media (min-width: 1300px) {
-  .container {
+.container {
+  padding: 0;
+  @media (min-width: 1300px) {
     max-width: 1264px;
     padding: 0;
   }
 }
+
+
 @media (max-width: 992px) {
   body,
   html {

@@ -670,6 +670,10 @@ option {
   color: #dd4519;
 }
 
+.container {
+  padding: 0;
+}
+
 @media (min-width: 1300px) {
   .container {
     max-width: 1264px;

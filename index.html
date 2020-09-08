@@ -24,19 +24,19 @@
 
     <!-- php lib -->
     <style>
-    .loader_inner_wrapper{
-        position :fixed;
-        z-index: 99999;
-        width: 100%;
-        height : 100%;
-        background : transparent;
-    }
-    .loader_inner_wrapper img{
-        position: absolute;
-        top : 50%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
-    }
+        .loader_inner_wrapper{
+            position :fixed;
+            z-index: 99999;
+            width: 100%;
+            height : 100%;
+            background : transparent;
+        }
+        .loader_inner_wrapper img{
+            position: absolute;
+            top : 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
     </style>
 </head>
 <body>
@@ -75,55 +75,100 @@
                 </nav>
             </div> 
             <div id="menu">
-                <ul class="container">
-                    <li class="d-inline-block" v-for="(item, index) in main_list" :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
-                </ul>
+                <div class="container">
+                    <ul :style="{'width': menu_width+'px' }" class="main_menu">
+                        <li class="d-inline-block" v-for="(item, index) in main_list" @click="menuHandler('current_main_menu', index, item.category_id)" :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
+                    </ul>
+                </div>
+                <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave">
+                    <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
+                        <h4>{{ sub_item.category_sub_name }}</h4>
+                        <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a></li>
+                    </ul>
+                </div>
             </div>
             <link rel="stylesheet" href="assets/css/header.css">
             <script>
                 var wrapper = new Vue({
-                el : '#menu',
-                data : {
-                    main_list: null,
-                    sub_list: null,
-                    extra_list: null,
-                    current_main_menu: 0,
-                    current_sub_menu: 0,
-                    current_extra_menu: 0,
-
-                },
-                mounted() {
-                    this.$nextTick(() => {
-                        this.loadMenu();
-                    })
-                },
-                methods : {
-                    loadMenu (){
-                        const main = axios.get("assets/json/find_main_list.json");
-                        const sub = axios.get("assets/json/find_sub_list.json");
-                        const extra = axios.get("assets/json/find_extra_list.json");
-
-                        axios.all([main, sub, extra]).then(axios.spread((...responses) => {
-                            const { data: main_list} = responses[0];
-                            const { data: sub_list} = responses[1];
-                            const { data: extra_list} = responses[2];
-                            this.main_list = main_list;
-                            this.sub_list = sub_list;
-                            this.extra_list = extra_list;
-                        })).catch(errors => {
-                            console.error(errors);
-                            // react on errors.
-                        })
-                        
+                    el : '#menu',
+                    data : {
+                        main_list: null,
+                        sub_list: null,
+                        extra_list: null,
+                        current_main_menu: null,
+                        current_sub_menu: '', // category_id
+                        current_extra_menu: '', // category_sub_id
+                        menu_width: 1258, // default: 個別選單寬度80*17個
                     },
-                }
-            })
+                    computed: {
+                        filter_rest_list() {
+                            if(this.sub_list) {
+                                const filter_data = this.sub_list.filter(item=> {
+                                    const inner_list = this.extra_list.filter( extra => {
+                                        return extra.category_sub_id === item.category_sub_id;
+                                    })
+                                    if(item.category_id === this.current_sub_menu) { // 把對應extra_list塞入sub_list
+                                        item['extra_list'] = inner_list;
+                                    }
+                                    return item.category_id === this.current_sub_menu;
+                                })
+                                return filter_data;   
+                            }
+                        }    
+                    },
+                    mounted() {
+                        this.$nextTick(() => {
+                            this.loadMenu(); // 撈選單資料
+                        })
+                    },
+                    methods : {
+                        loadMenu (){
+                            const main = axios.get("assets/json/find_main_list.json");
+                            const sub = axios.get("assets/json/find_sub_list.json");
+                            const extra = axios.get("assets/json/find_extra_list.json");
+
+                            axios.all([main, sub, extra]).then(axios.spread((...responses) => {
+                                const { data: main_list} = responses[0];
+                                const { data: sub_list} = responses[1];
+                                const { data: extra_list} = responses[2];
+                                this.main_list = main_list;
+                                this.sub_list = sub_list;
+                                this.extra_list = extra_list;
+                                this.menu_width = this.main_list.length*80;
+                            })).catch(errors => {
+                                console.error(errors);
+                                // react on errors.
+                            })
+                            
+                        },
+                        menuHandler(menuType, index, id) { // 選單切換
+                            this[menuType] = index;
+                            switch(menuType) {
+                                case 'current_main_menu':
+                                    {
+                                        this.current_sub_menu = id;
+                                    }
+                                    break;
+                                case 'current_sub_menu':
+                                    {
+                                        this.current_extra_menu = id;
+                                    }
+                                    break;
+
+                            }
+                        },
+                        mouseLeave() {
+                            console.log('leave');
+                            this.current_main_menu = null;
+                        },
+                    }
+                });
             </script>
         </header>
-
         <!-- 以下header結束 -->
 
        
+
         <!-- 以下為php $path loading範圍 -->
         <div id="layoutWrapper">
             
@@ -136,7 +181,7 @@
                         </div>
                     </div>
                     <!-- {{indexData.slides.datalist}} -->
-                    <div class="carousel-item" ""{'active': idx == 0 , 'd-none' : carouselClose }" :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData.slides.datalist">
+                    <div class="carousel-item" :class="{'active': idx == 0 , 'd-none' : carouselClose }" :data-bb="slide.img_src_pc"  v-for="(slide,idx) in indexData.slides.datalist">
                         <div :style="{ 'background-color' : slide.bgcolor }">
                             <div class="container">
                                 <!-- pc -->
@@ -292,13 +337,13 @@
                 </a>
             </div>
             <div class="container mb-5"><hr></div>
-            <div class="index-banner container">
+            <!-- <div class="index-banner container">
                 <template v-for="(item,key,idx) in indexData.banner.datalist">
                     <a :href="item.target_link" :target="item.target" class="d-none d-md-block" rel="noopener noreferrer"><img :src="item.img_src_pc" alt="" class="img-fluid"></a>
                     <a :href="item.target_link" :target="item.target" class="d-xs-block d-md-none" rel="noopener noreferrer"><img :src="item.img_src_m" alt="" class="img-fluid"></a>
                 </template>
                 
-            </div>
+            </div> -->
             <div class="container mb-5"><hr></div>
             <!-- 5columns products -->
             <div class="container mt-5 clearfix">
@@ -463,13 +508,14 @@
                 index : function(){
                     var _this = this;
                     axios({
-                        method : 'post',
+                        method : 'get',
                         url : 'assets/json/index.json',
                         responseType : 'json', 
                     }).then(function(data){
-                        if( data.status == 200 ){
-                            _this.indexData = data.data;
-                            console.log(data.data)
+                        const { data: index_data, status } = data;
+                        if( status == 200 ){
+                            _this.indexData = index_data;
+                            console.log(index_data)
                             console.log(_this.indexData.slides)
                             _this.carouselClose = false
                             $("#carousel-fake").addClass("d-none")
@@ -494,7 +540,6 @@
                     var _isUrlClear = allFunc.getUrlParam("category_id");
                     // _this.slide();
                     _this.index();
-                    _this.list_main(afterMainLoad);
                     function afterMainLoad(){
                         // if( _isUrlClear == "" || _isUrlClear == null){
                             // 網址不帶params。隨機
@@ -588,7 +633,7 @@
                     var _this = this;
                     console.log(id)
                     axios({
-                        method : 'post',
+                        method : 'get',
                         url : './api_member/switch_favourite',
                         responseType : 'json', 
                         data : Qs.stringify({
@@ -599,7 +644,6 @@
                             console.log(source,tabIdx,proIdx,id)
                         if( data.data.sys_code == "200" ){
                             console.log("!")
-                            console.log(_this[source][tabIdx].datalist[proIdx])
                             // _this[source][tabIdx].datalist[proIdx].favourite = data.data.favourite
                             // console.log(data.data.favourite)
                         }else{
@@ -617,7 +661,7 @@
                     }
                 }
             }
-        })
+        });
         </script>
         <!-- 以上為php $path loading範圍 -->
     </div>

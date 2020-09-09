@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,13 @@
     <title>首頁</title>
 
     <!-- php lib -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="assets/js/bootstrap4/bootstrap.css">
-    <base href="" >
+    <base href="">
     <!-- <link rel="stylesheet" href="assets/css/all.css"> -->
     <link rel="stylesheet" href="assets/css/index.css">
-    
+
     <script src="assets/js/jquery-3.4.1.min.js"></script>
     <script src="assets/js/bootstrap4/popper.min.js"></script>
     <script src="assets/js/vue/vue.js"></script>
@@ -20,178 +22,196 @@
     <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
     <script src="assets/js/bootstrap4/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/0e1a09a8fc.js" crossorigin="anonymous"></script>
-    <script src="assets/js/allfunc.js"></script> 
+    <script src="assets/js/allfunc.js"></script>
 
     <!-- php lib -->
     <style>
-        .loader_inner_wrapper{
-            position :fixed;
+        .loader_inner_wrapper {
+            position: fixed;
             z-index: 99999;
             width: 100%;
-            height : 100%;
-            background : transparent;
+            height: 100%;
+            background: transparent;
         }
-        .loader_inner_wrapper img{
+
+        .loader_inner_wrapper img {
             position: absolute;
-            top : 50%;
+            top: 50%;
             left: 50%;
             transform: translateX(-50%) translateY(-50%);
         }
     </style>
 </head>
+
 <body>
     <div class="loader_inner_wrapper text-center d-none" id="st_loading">
         <img src="assets/images/loading.svg" alt="" width=30 height=30>
     </div>
-    <div id="wrapper bg-white">
+    <div id="wrapper">
         <!-- 以下header開始 -->
         <header>
             <div class="container">
                 <nav class="navbar navbar-expand navbar-light d-flex justify-content-between">
                     <a href="./" class="navbar-brand"><img class="img-fluid" src="assets/images/logo.png" alt=""></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent" style="flex-grow: unset;">
+                    <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent"
+                        style="flex-grow: unset;">
                         <form class="form-inline d-none d-lg-inline-block" id="site_search">
-                            <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search" id="form_search">
+                            <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search"
+                                id="form_search">
                             <button class="btn" type="submit" id="form_submit"><i class="fas fa-search"></i></button>
                         </form>
                         <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
                             <div class="p-2 pl-lg-4 bd-highlight">
-                                <span class="d-none d-lg-inline-block">購物車 / </span><span class="text-warning" id="price_in_cart">$0</span>
+                                <span class="d-none d-lg-inline-block">購物車 / </span><span class="text-warning"
+                                    id="price_in_cart">$0</span>
                                 <a href="cart"><i class="fas fa-shopping-cart d-none"></i></a>
                             </div>
                             <div class="p-2 bd-highlight">
-                                <a href="favorite"><i class="fab fa-gratipay d-none"></i><span class="d-md-block">追蹤清單</span></a>
-                                
+                                <a href="favorite"><i class="fab fa-gratipay d-none"></i><span
+                                        class="d-md-block">追蹤清單</span></a>
+
                             </div>
                             <div class="p-2 bd-highlight">
-                                <a href="mc_order"><i class="fas fa-user-circle d-none"></i><span class="d-md-block">帳戶管理</span></a>
-                                
+                                <a href="mc_order"><i class="fas fa-user-circle d-none"></i><span
+                                        class="d-md-block">帳戶管理</span></a>
+
                             </div>
                         </div>
                     </div>
                 </nav>
-            </div> 
-            <div id="menu">
-                <div class="container">
-                    <ul :style="{'width': menu_width+'px' }" class="main_menu">
-                        <li class="d-inline-block" v-for="(item, index) in main_list" @click="menuHandler('current_main_menu', index, item.category_id)" :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
-                    </ul>
-                </div>
-                <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave">
-                    <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
-                        <h4>{{ sub_item.category_sub_name }}</h4>
-                        <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a></li>
-                    </ul>
-                </div>
             </div>
-            <link rel="stylesheet" href="assets/css/header.css">
-            <script>
-                var wrapper = new Vue({
-                    el : '#menu',
-                    data : {
-                        main_list: null,
-                        sub_list: null,
-                        extra_list: null,
-                        current_main_menu: null,
-                        current_sub_menu: '', // category_id
-                        current_extra_menu: '', // category_sub_id
-                        menu_width: 1258, // default: 個別選單寬度80*17個
-                    },
-                    computed: {
-                        filter_rest_list() {
-                            if(this.sub_list) {
-                                const filter_data = this.sub_list.filter(item=> {
-                                    const inner_list = this.extra_list.filter( extra => {
-                                        return extra.category_sub_id === item.category_sub_id;
-                                    })
-                                    if(item.category_id === this.current_sub_menu) { // 把對應extra_list塞入sub_list
-                                        item['extra_list'] = inner_list;
-                                    }
-                                    return item.category_id === this.current_sub_menu;
-                                })
-                                return filter_data;   
-                            }
-                        }    
-                    },
-                    mounted() {
-                        this.$nextTick(() => {
-                            this.loadMenu(); // 撈選單資料
-                        })
-                    },
-                    methods : {
-                        loadMenu (){
-                            const main = axios.get("assets/json/find_main_list.json");
-                            const sub = axios.get("assets/json/find_sub_list.json");
-                            const extra = axios.get("assets/json/find_extra_list.json");
-
-                            axios.all([main, sub, extra]).then(axios.spread((...responses) => {
-                                const { data: main_list} = responses[0];
-                                const { data: sub_list} = responses[1];
-                                const { data: extra_list} = responses[2];
-                                this.main_list = main_list;
-                                this.sub_list = sub_list;
-                                this.extra_list = extra_list;
-                                this.menu_width = this.main_list.length*80;
-                            })).catch(errors => {
-                                console.error(errors);
-                                // react on errors.
-                            })
-                            
-                        },
-                        menuHandler(menuType, index, id) { // 選單切換
-                            this[menuType] = index;
-                            switch(menuType) {
-                                case 'current_main_menu':
-                                    {
-                                        this.current_sub_menu = id;
-                                    }
-                                    break;
-                                case 'current_sub_menu':
-                                    {
-                                        this.current_extra_menu = id;
-                                    }
-                                    break;
-
-                            }
-                        },
-                        mouseLeave() {
-                            console.log('leave');
-                            this.current_main_menu = null;
-                        },
-                    }
-                });
-            </script>
         </header>
-        <!-- 以下header結束 -->
+        <!-- header結束 -->
 
-       
 
-        <!-- 以下為php $path loading範圍 -->
-        <div id="layoutWrapper">
-            
-            <div id="carouselIndexCaptions" class="carousel slide" data-ride="carousel">
+
+        <!-- 以下menu開始 -->
+        <div id="menu">
+            <div class="container" :style="{'max-width': menu_width+'px' }">
+                <ul :style="{'width': menu_width+'px' }" class="main_menu">
+                    <li class="d-inline-block" v-for="(item, index) in main_list"
+                        @click="menuHandler('current_main_menu', index, item.category_id)"
+                        :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
+                </ul>
+            </div>
+            <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave">
+                <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
+                    <h4>{{ sub_item.category_sub_name }}</h4>
+                    <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <link rel="stylesheet" href="assets/css/header.css">
+        <script>
+            var wrapper = new Vue({
+                el: '#menu',
+                data: {
+                    main_list: null,
+                    sub_list: null,
+                    extra_list: null,
+                    current_main_menu: null,
+                    current_sub_menu: '', // category_id
+                    current_extra_menu: '', // category_sub_id
+                    menu_width: 1258, // default: 個別選單寬度80*17個
+                },
+                computed: {
+                    filter_rest_list() {
+                        if (this.sub_list) {
+                            const filter_data = this.sub_list.filter(item => {
+                                const inner_list = this.extra_list.filter(extra => {
+                                    return extra.category_sub_id === item.category_sub_id;
+                                })
+                                if (item.category_id === this
+                                    .current_sub_menu) { // 把對應extra_list塞入sub_list
+                                    item['extra_list'] = inner_list;
+                                }
+                                return item.category_id === this.current_sub_menu;
+                            })
+                            return filter_data;
+                        }
+                    }
+                },
+                mounted() {
+                    this.$nextTick(() => {
+                        this.loadMenu(); // 撈選單資料
+                    })
+                },
+                methods: {
+                    loadMenu() {
+                        const main = axios.get("assets/json/find_main_list.json");
+                        const sub = axios.get("assets/json/find_sub_list.json");
+                        const extra = axios.get("assets/json/find_extra_list.json");
+
+                        axios.all([main, sub, extra]).then(axios.spread((...responses) => {
+                            const {
+                                data: main_list
+                            } = responses[0];
+                            const {
+                                data: sub_list
+                            } = responses[1];
+                            const {
+                                data: extra_list
+                            } = responses[2];
+                            this.main_list = main_list;
+                            this.sub_list = sub_list;
+                            this.extra_list = extra_list;
+                            this.menu_width = this.main_list.length * 80;
+                        })).catch(errors => {
+                            console.error(errors);
+                            // react on errors.
+                        })
+
+                    },
+                    menuHandler(menuType, index, id) { // 選單切換
+                        this[menuType] = index;
+                        switch (menuType) {
+                            case 'current_main_menu': {
+                                this.current_sub_menu = id;
+                            }
+                            break;
+                        case 'current_sub_menu': {
+                            this.current_extra_menu = id;
+                        }
+                        break;
+
+                        }
+                    },
+                    mouseLeave() {
+                        console.log('leave');
+                        this.current_main_menu = null;
+                    },
+                }
+            });
+        </script>
+        <!-- menu結束 -->
+
+
+        <!-- 以下content始 -->
+        <div id="content">
+            <div id="carouselIndexCaptions" class="carousel slide" data-ride="carousel" data-interval="4000">
                 <div class="carousel-inner">
-                    <div class="carousel-item-fake" id="carousel-fake">
-                        <div class="container">
-                            <img class="d-none d-md-block img-fluid" src="assets/images/carousel_wrapper.png" alt="">
-                            <img src="assets/images/m-sample.png" class="d-xs-block d-md-none  img-fluid" alt="">
-                        </div>
-                    </div>
-                    <!-- {{indexData.slides.datalist}} -->
-                    <div class="carousel-item" :class="{'active': idx == 0 , 'd-none' : carouselClose }" :data-bb="slide.img_src_pc"  v-for="(slide,idx) in indexData.slides.datalist">
+                    <div class="carousel-item" :class="{'active': idx == 0 , 'd-none' : carouselClose }"
+                        :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData[0].datalist">
                         <div :style="{ 'background-color' : slide.bgcolor }">
-                            <div class="container">
-                                <!-- pc -->
-                                <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block" rel="noopener noreferrer">
-                                    <img :src="slide.img_src_pc" class="d-block w-100" :alt="slide.subject">
-                                </a>
-                                <!-- m -->
-                                <a :href="slide.target_link" rel="noopener noreferrer" :target="slide.target" class="d-xs-block d-md-none"><img :src="slide.img_src_m" class="d-block w-100" alt=""></a>
-                                <!-- <a :href="slide.target_link" class="d-xs-block d-md-none"><img :src="slide.img_src" class="d-block w-100" :alt="slide.subject"></a> -->
-                            </div>
+                            <!-- <div class="container"> -->
+                            <!-- pc -->
+                            <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block"
+                                rel="noopener noreferrer">
+                                <img :src="slide.img_src_pc" class="d-block w-100" :alt="slide.subject">
+                            </a>
+                            <!-- m -->
+                            <a :href="slide.target_link" rel="noopener noreferrer" :target="slide.target"
+                                class="d-xs-block d-md-none"><img :src="slide.img_src_m" class="d-block w-100"
+                                    alt=""></a>
+                            <!-- <a :href="slide.target_link" class="d-xs-block d-md-none"><img :src="slide.img_src" class="d-block w-100" :alt="slide.subject"></a> -->
+                            <!-- </div> -->
                         </div>
                     </div>
                 </div>
@@ -204,344 +224,117 @@
                     <span class="sr-only">Next</span>
                 </a>
             </div>
-            <div class="bg-light p-3 d-xs-block d-lg-none">
-                <div class="container">
-                    <!-- <form class="" id="site_search">
-                        <input class="form-control pl-3" type="search" placeholder="在找什麼嗎？" aria-label="Search" id="form_search">
-                        <button class="btn pt-2 pb-2 pr-4" type="submit" id="form_submit"><i class="fas fa-search"></i></button>
-                    </form> -->
+
+            <div class="container tab_area" id="tab1">
+                <div class="tab">
+                    <ul :style="{'width': tab1_width+ 'px'}">
+                        <li class="d-inline-block" v-for="(tab, idx) in indexData[1].datalist"
+                            :class="{'active': idx === current_tab1 }" @click="tabHandler('current_tab1', idx)">
+                            {{ tab.title }}</li>
+                    </ul>
+
                 </div>
-            </div>
-            <div class="control-fixed-top bg-white" id="fixed-wrapper">
-                <!-- pc category -->
-                <div class="container  d-none d-md-block">
-                    <div class="pt-2 pb-1 pl-3 pr-3 mt-3 border-bottom ">
-                        <div class="float-right" @click="toggleCategory">
-                            <small class="mr-1">{{category.close.txt}}</small>
-                            <i class="fas" :class="category.close.class"></i>
-                        </div>
-                        <nav aria-label="breadcrumb" class="">
-                            <ol class="breadcrumb mb-0 p-0">
-                                <li class="breadcrumb-item">商品分類</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-                <!-- m category -->
-                <div class="d-xs-block d-md-none container pt-1 pb-1 pt-lg-3 pb-lg-3">
-                    <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="#">首頁</a></li>
-                        <!-- <li class="breadcrumb-item" v-for="(cata,idx) in category.main" v-show="cata.category_id == category.active.main" @click.prevent="callSub('sub',cata.category_id,cata.category_name)">{{cata.category_name}}</li> -->
-                        <!-- <li class="breadcrumb-item" v-for="(cateb,idx) in category.sub" v-show="cateb.category_sub_id == category.active.sub" @click.prevent="callSub('extra',cateb.category_sub_id,cateb.category_sub_name)">{{cateb.category_sub_name}}</li>
-                        <li class="breadcrumb-item" v-for="(catec,idx) in category.extra" v-show="catec.category_extra_id == category.active.extra" @click.prevent="callSub('final',catec.category_extra_id,catec.category_extra_name)">{{catec.category_extra_name}}</li> -->
-                    </ol>
-                </div>
-                <div class="container d-xs-block d-md-none container pt-1">
-                    <div class="bg-light p-3 border-bottom">
-                        <div class="float-right" @click="toggleCategory">
-                            <small class="mr-1">{{category.close.txt}}</small>
-                            <i class="fas" :class="category.close.class"></i>
-                        </div>
-                        <p class="text-dark d-inline" style="width:100px">分類</p>
-                    </div>
-                </div>
-                <nav :class="{'d-none' : category.close.isClose }" class="container navCatalog mb-1">
-                    <div class="pt-1 pb-2 pl-3 pr-3">
-                        <ul class="navCata-ul">
-                            <li class="nav-item" :class="{ 'active' : cata.category_id == category.active.main }" v-for="(cata,idx) in category.main"><a :href="'category?category_id=' + cata.category_id">{{cata.category_name}}</a></li>
-                        </ul>
-                    </div>
-                    <!-- <div class="pt-1 pb-2 pl-3 pr-3">
-                        <ul class="navCata-ul">
-                            <li class="nav-item" :class="{ 'active' : cata.category_id == category.active.main }" v-for="(cata,idx) in category.main"><a href="" @click.prevent="callSub('sub',cata.category_id,cata.category_name)">{{cata.category_name}}</a></li>
-                        </ul>
-                    </div> -->
-                    <!-- <div class="pt-1 pb-2 pl-3 pr-3" :class="{'d-none' : close.sub }">
-                        <ul class="navCata-ul">
-                            <li class="nav-item" v-for="(cateb,idx) in category.sub" :class="{ 'active' : cateb.category_sub_id == category.active.sub }"><a href="" @click.prevent="callSub('extra',cateb.category_sub_id,cateb.category_sub_name)">{{cateb.category_sub_name}}</a></li>
-                        </ul>
-                    </div>
-                    <div class="pt-1 pb-2 pl-3 pr-3" :class="{'d-none' : close.extra }">
-                        <ul class="navCata-ul">
-                            <li class="nav-item" v-for="(catec,idx) in category.extra" :class="{ 'active' : catec.category_extra_id == category.active.extra }"><a href="" @click.prevent="callSub('final',catec.category_extra_id,catec.category_extra_name)">{{catec.category_extra_name}}</a></li>
-                        </ul>
-                    </div> -->
-                </nav>
-            </div>
-            <div id="" class="container product_area mt-4 mt-lg-5  mb-5">
-                <h2 class="index-title mb-3 d-inline mr-2">精選好康</h2>
-                <nav class="d-inline" id="index-1-nav">
-                    <div class="nav nav-tabs d-inline" id="nav-tab" role="tablist">
-                        <a v-for="(sf,sfidx,trueIdx) in indexData.features" class="nav-item nav-link d-inline" :class="{'active' : trueIdx == 0}" :id="'nav-' + sf.id + '-tab'" data-toggle="tab" :href="'#nav-' + sf.id" role="tab" :aria-controls="'nav-' + sf.id" aria-selected="true">{{sf.name}}</a>
-                    </div>
-                </nav>
-                <div class="tab-content mt-3" id="nav-tabContent">
-                    <div v-for="(sf,sffidx,trueIdx) in indexData.features" class="tab-pane fade show" :class="{'active' : trueIdx == 0}" :id="'nav-' + sf.id" role="tabpanel" :aria-labelledby="'nav-' + sf.id + '-tab'">
-                        <div class="row">
-                            <div class="col-6 col-md-4 col-lg-2 mb-2 singleProduct" v-for="(product,pidx) in sf.datalist">
-                                <a :href="'./product/' + product.product_id">
-                                    <div class="foto-area mb-1">
-                                        <div class="squre_img">
-                                            <img :src="product.product_main_img ? product.product_main_img : 'assets/images/none.jpg'"  alt="TEST商品名稱" class="img-fluid">
-                                            <!-- :src="product.product_main_img" -->
-                                        </div>
-                                        <span class="badge badge-warning hint" v-text="gosubstr(product.product_ad_info,4)"></span>
-                                    </div>
-                                    <div class="pt-2">
-                                        <h5 class="card-title text-nowrap m-0 text-dark">{{product.product_name}}</h5>
-                                        
-                                    </div>
-                                </a>
-                                <div class="border-0 pt-0">
-                                    <div class="row no-gutters mt-3">
-                                        <div class="col-12">
-                                            <p class="pa_desc p-0 m-0 text-warning">超值特價<small class="text-muted op_small ml-1">原價$<del><span class="origial_price">{{product.product_suggest_price}}</span></del></small></p>
-                                            <p class="pa_price d-inline text-warning">NT${{product.product_selling_price}}</p>
-                                            <p class="d-inline pa_desc">起</p>
-                                            <div class="lovedWrapper d-inline-block float-right">
-                                                <i class="fa-heart loved d-lg-block" :class="{ 'fas' : product.switch , 'far' : !product.switch}"  @click="switchFavorite('feature',sffidx,pidx,product.product_id)"></i>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="col-7">
-                                            <small class="d-inline pa_desc">已搶購</small>
-                                            <span class="d-inline pa_desc">1222</span>
-                                        </div>
-                                        <div class="col-5 text-right">
-                                            <div class="lovedWrapper d-block">
-                                                <i class="fa-heart loved d-lg-block mt-2" :class="{ 'fas' : product.switch , 'far' : !product.switch}"  @click="switchFavorite('feature',sffidx,pidx,product.product_id)"></i>
-                                            </div>
-                                        </div> -->
-                                    </div>
-                                </div>
+                <div class="mb_scroll">
+                    <div class="row content_list" v-for="(row, idx) in indexData[1].datalist"
+                        :class="{'active': idx === current_tab1 }" :style="{width: listWidth(1, idx)}">
+                        <div class="col-sm-6 col-md-4 col-lg-3" v-for="(list, index) in row.products_list">
+                            <div class="img_wrapper">
+                                <img src="assets/images/product_1.png" width="100%" alt="">
+                                <span class="label">{{ row.title }}</span>
+                            </div>
+                            <div class="info">
+                                <h6>
+                                    {{ list.product_name }}
+                                </h6>
+                                <span class="f_orange">{{ list.product_ad_info }}</span>
+                                <span class="f_grey suggest_price">原價
+                                    <span>{{ list.product_suggest_price }}</span></span>
+                                <font class="d-inline-block"
+                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}">
+                                    {{ list['tag-text'] }}</font>
+                                <h5 class="f_orange price">{{ list.product_selling_price }}</h5>
                             </div>
                         </div>
+
                     </div>
                 </div>
+
+                <span class="see_more">更多折扣商品</span>
             </div>
-            <div class="container"><hr></div>
-            <!-- 5columns products -->
-            <div class="container mt-5 clearfix">
-                <a :href="'./product/' + ip1.product_id"  rel="noopener noreferrer" class="index-for5 mb-5" v-for="(ip1,ip1Idx) in indexData.product5_list1.datalist">
-                    <div class="row no-gutters">
-                        <div class="col-5">
-                            <div class="squre_img">
-                                <img :src="ip1.product_main_img" class="img-fluid" alt="">
-                            </div>
-                        </div>
-                        <div class="col-7 pl-2 singleProduct">
-                            <p class="index-for5-brand">{{ip1.product_ad_info}}</p>
-                            <p class="index-for5-describe" v-text="txt_sub(ip1.product_name)">{{ip1.product_name}}</p>
-                            <div class="index-for5-price">{{ip1.price_attr_txt}}${{ip1.product_selling_price}}</div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="container mb-5"><hr></div>
-            <!-- <div class="index-banner container">
-                <template v-for="(item,key,idx) in indexData.banner.datalist">
-                    <a :href="item.target_link" :target="item.target" class="d-none d-md-block" rel="noopener noreferrer"><img :src="item.img_src_pc" alt="" class="img-fluid"></a>
-                    <a :href="item.target_link" :target="item.target" class="d-xs-block d-md-none" rel="noopener noreferrer"><img :src="item.img_src_m" alt="" class="img-fluid"></a>
-                </template>
-                
-            </div> -->
-            <div class="container mb-5"><hr></div>
-            <!-- 5columns products -->
-            <div class="container mt-5 clearfix">
-                <a :href="'./product/' + ip2.product_id"  rel="noopener noreferrer" class="index-for5 mb-5" v-for="(ip2,ip2Idx) in indexData.product5_list2.datalist">
-                    <div class="row no-gutters">
-                        <div class="col-5">
-                            <div class="squre_img">
-                                <img :src="ip2.product_main_img" class="img-fluid" alt="">
-                            </div>
-                        </div>
-                        <div class="col-7 pl-2 singleProduct">
-                            <p class="index-for5-brand">{{ip2.product_ad_info}}</p>
-                            <p class="index-for5-describe" v-text="txt_sub(ip2.product_name)"></p>
-                            <div class="index-for5-price">{{ip2.price_attr_txt}}${{ip2.product_selling_price}}</div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="d-none container product_area" id="">
-                <div class="row no-gutters">
-                    <template v-if="products.total_count == 0">
-                        <div class="col-12 text-center pt-5 pb-5">
-                            <small>尚無商品</small>
-                        </div>
-                    </template>
-                    <div v-else class="col-6 col-md-4 col-lg-3 mb-2 p-3 singleProduct" v-for="(product,idx) in products.datalist">
-                        <!-- <div class="card rounded-0"> -->
-                            <a :href="'./product/' + product.product_id" class="">
-                                <div class="foto-area mb-1">
-                                    <img :src="product.product_main_img" class="img-fluid" :alt="product.product_name">
-                                    <span class="badge badge-warning hint" v-text="gosubstr(product.product_ad_info,4)"></span>
-                                <div class="pt-2">
-                                    <h5 class="card-title text-nowrap m-0 text-dark">{{product.product_name}}</h5>
-                                    <small class="text-muted d-block op_small">原價$<del><span class="origial_price">{{product.product_suggest_price}}</span></del></small>
-                                </div>
-                            </a>
-                            <div class="border-0 pt-0">
-                                <div class="row no-gutters mt-3">
-                                    <div class="col-12 col-lg-7">
-                                        <p class="pa_desc p-0 m-0 text-warning">超值特價</p>
-                                        <p class="pa_price d-inline text-warning">NT${{product.product_selling_price}}</p><p class="d-inline pa_desc">起</p>
-                                    </div>
-                                    <div class="col-12 col-lg-5 text-right">
-                                        <i class="fa-heart loved d-lg-block mt-2" :class="{ 'fas' : product.favourite , 'far' : !product.favourite}"  @click="switchFavorite(idx,product.product_id)"></i>
-                                        <small class="d-inline pa_desc">已搶購</small><span class="d-inline text-danger pa_desc">{{product.price}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        <!-- </div> -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- footer php include -->
-            <div id="footer">
-                    <div class="container mt-5 pt-5 clearfix">
-                        <div class="index-for5 mb-5">
-                            <h2 class="mb-3">關於我們</h2>
-                            <ul>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">7YAGO福利網</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">招募供應商</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">機構團體加入</a></li>
-                            </ul>
-                        </div>
-                        <div class="index-for5 mb-5">
-                            <h2 class="mb-3">專屬服務</h2>
-                            <ul>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">大宗採購方案</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">年節禮品採購</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">異業合作</a></li>
-                            </ul>
-                        </div>
-                        <div class="index-for5 mb-5">
-                            <h2 class="mb-3">會員權益</h2>
-                            <ul>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">隱私權政策</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">電子商務條款</a></li>
-                            </ul>
-                        </div>
-                        <div class="index-for5 mb-5">
-                            <h2 class="mb-3">常見問題</h2>
-                            <ul>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">訂單出貨流程說明</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">取消訂單/退貨/退款說明</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">購物金使用說明</a></li>
-                                <li><a href="http://" target="_blank" rel="noopener noreferrer">聯絡我們</a></li>
-                            </ul>
-                        </div>
-                        <div class="index-for5 mb-5">
-                            <h2 class="mb-3">隨身好助理</h2>
-                            <img src="assets/images/qrcode.png" alt="" class="img-fluid w-75">
-                        </div>
-                    </div>
-                    <div class="text-center pb-3">
-                        <p class="m-0"><small>吉品養生股份有限公司 2020 ALL Rights Reserved</small></p>
-                        <p><small class="m-0">台北市忠孝東路四段212號10樓。客服信箱：service@yonglinfarm.net</small></p>
-                    </div>
-                </div>
-            </div>
+
+
+
+
+
+
         </div>
         <script>
-        var wrapper = new Vue({
-            el : '#layoutWrapper',
-            data : {
-                random_get : 0,
-                slides : '',
-                carouselClose : true,
-                products : '',
-                category : {
-                    close : {
-                        txtArr : ['收起','展開'],
-                        classArr : ['fa-angle-up','fa-angle-down'],
-                        txt : '收起',
-                        class : 'fa-angle-up',
-                        isClose : false
-                    },
-                    active : {
-                        main : '',
-                        sub : '',
-                        extra : ''
-                    },
-                    main : '',
-                    sub : '',
-                    extra : ''
+            var wrapper = new Vue({
+                el: '#content',
+                data: {
+                    indexData: {},
+                    tab_width: 137,
+                    list_item_width: 146,
+                    current_tab1: 0,
+                    tab1_width: 550,
+                    current_tab2: 0,
+                    current_tab3: 0,
+
+
                 },
-                close : {
-                    sub : true,
+                created() {
+                    this.index();
                 },
-                indexData : {
-                    slides : '',
-                    feature : '',
-                    product5_list1 : '',
-                    category : '',
-                    banner : '',
-                    product5_list2 : ''
-                },
-            },
-            mounted() {
-                var _this = this;
-                _this.loadAndPop();
-                // 上下頁照params改動
-                window.onpopstate = function() {
+                mounted() {
+                    var _this = this;
                     _this.loadAndPop();
-                };
-                // 固定分類選單
-                var $carouselHeight = document.getElementById('carouselIndexCaptions').offsetHeight+120;
-                window.onscroll = function (e) {  
-                    var _top = document.getElementById('fixed-wrapper').offsetTop;
-                    var _windowTop = window.pageYOffset;
-                    console.log(_windowTop > $carouselHeight)
-                    if( _windowTop > $carouselHeight ){
-                        $("#fixed-wrapper").addClass("fixed-top")
-                    }else{
-                        $("#fixed-wrapper").removeClass("fixed-top")
-                    }
-                }
-            },
-            methods : {
-                txt_sub : function(txt){
-                    return txt.substr(0,10)
+                    // 上下頁照params改動
+                    window.onpopstate = function () {
+                        _this.loadAndPop();
+                    };
+                    // 固定分類選單
+
                 },
-                index : function(){
-                    var _this = this;
-                    axios({
-                        method : 'get',
-                        url : 'assets/json/index.json',
-                        responseType : 'json', 
-                    }).then(function(data){
-                        const { data: index_data, status } = data;
-                        if( status == 200 ){
-                            _this.indexData = index_data;
-                            console.log(index_data)
-                            console.log(_this.indexData.slides)
-                            _this.carouselClose = false
-                            $("#carousel-fake").addClass("d-none")
-                        }else{
-                        }
-                    })
-                },
-                toggleCategory : function(){
-                    var _this = this;
-                    if( _this.category.close.isClose ){
-                        _this.category.close.txt = _this.category.close.txtArr[0];
-                        _this.category.close.class = _this.category.close.classArr[0];
-                        _this.category.close.isClose = false
-                    }else{
-                        _this.category.close.txt =  _this.category.close.txtArr[1];
-                        _this.category.close.class = _this.category.close.classArr[1];
-                        _this.category.close.isClose = true;
-                    }
-                },
-                loadAndPop : function(){
-                    var _this = this;
-                    var _isUrlClear = allFunc.getUrlParam("category_id");
-                    // _this.slide();
-                    _this.index();
-                    function afterMainLoad(){
-                        // if( _isUrlClear == "" || _isUrlClear == null){
+                methods: {
+                    index: function () {
+                        var _this = this;
+                        axios({
+                            method: 'get',
+                            url: 'assets/json/index.json',
+                            responseType: 'json',
+                        }).then(function (data) {
+                            const {
+                                data: index_data,
+                                status
+                            } = data;
+                            if (status == 200) {
+                                _this.indexData = index_data;
+                                _this.tab1_width = _this.tab_width * index_data[1].datalist.length;
+
+
+
+                            } else {}
+                        })
+                    },
+                    tabHandler: function (tab, index) {
+                        this[tab] = index;
+                    },
+                    listWidth: function (tabIndex, listIndex) {
+                        const getTab = this[`current_tab${tabIndex+1}`];
+                        // console.log(getTab, listIndex);
+                        console.log(this.indexData[tabIndex].datalist[getTab]
+                            .products_list.length)
+                        // this.indexData[index]
+                        return '100%';
+                    },
+                    loadAndPop: function () {
+                        var _this = this;
+                        var _isUrlClear = allFunc.getUrlParam("category_id");
+                        // _this.slide();
+                        _this.index();
+
+                        function afterMainLoad() {
+                            // if( _isUrlClear == "" || _isUrlClear == null){
                             // 網址不帶params。隨機
                             // var _length = _this.category.main.length-1;
                             // var _getRandom = allFunc.randomFunc(0,_length);
@@ -551,119 +344,87 @@
                             //     extra : null,
                             // }
                             // window.history.pushState({},0,'category/' + '?category_id=' + _this.category.active.main);
-                        // }else{
+                            // }else{
                             // _this.category.active = {
                             //     main : allFunc.getUrlParam("category_id"),
                             //     sub : allFunc.getUrlParam("category_sub_id"),
                             //     extra : allFunc.getUrlParam("category_extra_id"),
                             // }
-                        // }
-                        // 如果sub在：呼叫sub跟extra
-                        // 如果sub不在：呼叫sub
-                        // console.log(_this.category.active["sub"])
-                        // if( _this.category.active["sub"] == undefined || _this.category.active["sub"] == null ){
-                        //     // 如果sub不在
-                        //     _this.list_sub(_this.category.active["main"]);
-                        // }else{
-                        //     // 如果sub在
-                        //     _this.list_sub(_this.category.active["main"]);
-                        //     _this.list_extra(_this.category.active["sub"]);
-                        // }
-                        // 呼叫商品列表
-                        // _this.product_list()
-                    }
-                },
-                feature_product : function(){
-                    var _this = this;
-                    axios({
-                        method : 'post',
-                        url : 'assets/json/index_feature.json',
-                        responseType : 'json', 
-                    }).then(function(data){
-                        if( data.status == 200 ){
-                            _this.indexData.features = data.data;
-                            console.log(_this.indexData.features)
-                        }else{
+                            // }
+                            // 如果sub在：呼叫sub跟extra
+                            // 如果sub不在：呼叫sub
+                            // console.log(_this.category.active["sub"])
+                            // if( _this.category.active["sub"] == undefined || _this.category.active["sub"] == null ){
+                            //     // 如果sub不在
+                            //     _this.list_sub(_this.category.active["main"]);
+                            // }else{
+                            //     // 如果sub在
+                            //     _this.list_sub(_this.category.active["main"]);
+                            //     _this.list_extra(_this.category.active["sub"]);
+                            // }
+                            // 呼叫商品列表
+                            // _this.product_list()
                         }
-                    })
-                },
-                category_product : function(){
-                    var _this = this;
-                    axios({
-                        method : 'post',
-                        url : 'assets/json/index_category.json',
-                        responseType : 'json', 
-                    }).then(function(data){
-                        if( data.status == 200 ){
-                            _this.indexData.category = data.data;
-                            console.log(_this.indexData.category)
-                        }else{
-                        }
-                    })
-                },
-                product_list : function(){
-                    // var _this = this;
-                    // var _active = _this.category.active;
-                    var _obj = {};
-                    // for( itemp in _active ){
-                    //     if( _active[itemp] != null ){
-                    //         if( itemp == "main" ){
-                    //             _obj['category_id'] = _active[itemp];
-                    //         }
-                    //         if( itemp == "sub" || itemp == "extra" ){
-                    //             _obj['category_' + itemp + '_id'] = _active[itemp];
-                    //         }
-                    //     }
-                    // }
-                    // console.log(_obj)
-                    axios({
-                        method : 'get',
-                        url : './api_product/search_list',
-                        responseType : 'json', 
-                        params : _obj
-                    }).then(function(data){
-                        
-                        _this.products = data.data
-                            console.log(data.data)
-                            console.log(_this.products)
-
-                    })
-                },
-                switchFavorite : function(source,tabIdx,proIdx,id){
-                    var _this = this;
-                    console.log(id)
-                    axios({
-                        method : 'get',
-                        url : './api_member/switch_favourite',
-                        responseType : 'json', 
-                        data : Qs.stringify({
-                            product_id : id
-                        })
-                    }).then(function(data){
-                        console.log(data)
-                            console.log(source,tabIdx,proIdx,id)
-                        if( data.data.sys_code == "200" ){
-                            console.log("!")
-                            // _this[source][tabIdx].datalist[proIdx].favourite = data.data.favourite
-                            // console.log(data.data.favourite)
-                        }else{
-                        }
-                    })
-                    
-                },
-                gosubstr(txt,til){
-                    console.log(txt)
-                    if( txt == null || txt == "null" || txt == "" ){
-                        return ''
-                    }else{
-                        var _txt = txt.substring(0,til);
-                        return _txt
-                    }
+                    },
                 }
-            }
-        });
+            });
         </script>
-        <!-- 以上為php $path loading範圍 -->
+        <!-- content結束 -->
+
+
+
+
+        <!-- footer php include -->
+        <div id="footer">
+            <div class="container mt-5 pt-5 clearfix">
+                <div class="index-for5 mb-5">
+                    <h2 class="mb-3">關於我們</h2>
+                    <ul>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">7YAGO福利網</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">招募供應商</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">機構團體加入</a></li>
+                    </ul>
+                </div>
+                <div class="index-for5 mb-5">
+                    <h2 class="mb-3">專屬服務</h2>
+                    <ul>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">大宗採購方案</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">年節禮品採購</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">異業合作</a></li>
+                    </ul>
+                </div>
+                <div class="index-for5 mb-5">
+                    <h2 class="mb-3">會員權益</h2>
+                    <ul>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">隱私權政策</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">電子商務條款</a></li>
+                    </ul>
+                </div>
+                <div class="index-for5 mb-5">
+                    <h2 class="mb-3">常見問題</h2>
+                    <ul>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">訂單出貨流程說明</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">取消訂單/退貨/退款說明</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">購物金使用說明</a></li>
+                        <li><a href="http://" target="_blank" rel="noopener noreferrer">聯絡我們</a></li>
+                    </ul>
+                </div>
+                <div class="index-for5 mb-5">
+                    <h2 class="mb-3">隨身好助理</h2>
+                    <img src="assets/images/qrcode.png" alt="" class="img-fluid w-75">
+                </div>
+            </div>
+            <div class="text-center pb-3">
+                <p class="m-0"><small>吉品養生股份有限公司 2020 ALL Rights Reserved</small></p>
+                <p><small class="m-0">台北市忠孝東路四段212號10樓。客服信箱：service@yonglinfarm.net</small></p>
+            </div>
+        </div>
+
+
+    </div>
+
+
     </div>
 </body>
+
 </html>

@@ -22,6 +22,7 @@
     <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
     <script src="assets/js/bootstrap4/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/0e1a09a8fc.js" crossorigin="anonymous"></script>
+    <script src="assets/js/sticky.min.js"></script>
     <script src="assets/js/allfunc.js"></script>
 
     <!-- php lib -->
@@ -90,8 +91,8 @@
 
 
 
-        <!-- 以下menu開始 -->
-        <div id="menu">
+        <!-- 以下menu開始，menu中間卡著一個kv輪播，所以使用absolute定位 -->
+        <div id="menu" class="sticky" :data-margin-top="(isMb)? 60 :90">
             <div class="container" :style="{'max-width': menu_width+'px' }">
                 <ul :style="{'width': menu_width+'px' }" class="main_menu">
                     <li class="d-inline-block" v-for="(item, index) in main_list"
@@ -127,9 +128,11 @@
                     current_sub_menu: '', // category_id
                     current_extra_menu: 0, // category_sub_id
                     menu_width: 1258, // default: 個別選單寬度80*17個
+                    isMb: true,
+                    sticky: null,
                 },
                 computed: {
-                    filter_rest_list() {
+                    filter_rest_list() { //主選單對應之次選單
                         if (this.sub_list) {
                             const filter_data = this.sub_list.filter(item => {
                                 const inner_list = this.extra_list.filter(extra => {
@@ -144,22 +147,42 @@
                             return filter_data;
                         }
                     },
-                    filter_mb_extra_list() {
+                    filter_mb_extra_list() { //次選單對應之下層選單，手機版使用
                         const extra_list = this.filter_rest_list[this.current_extra_menu];
                         return (extra_list) ? extra_list.extra_list: [];
                     }
                 },
                 mounted() {
+                    const _this = this;
                     this.$nextTick(() => {
+                        this.sticky = new Sticky('.sticky');
+                        this.detectWindowWidth()
                         this.loadMenu(); // 撈選單資料
-                        document.addEventListener("click", (e)=>{
+                        document.addEventListener("click", e => { // 選單展開後，點非menu內的物件，即關閉選單
                             const menu = document.getElementById( 'menu' );
                             const menu_outside_click = ~e.composedPath().indexOf(menu) >= 0;
                             if(menu_outside_click) this.current_main_menu = null;
                         });
+                        window.addEventListener('resize', function() { // 偵測是否為手機寬度 767
+                            _this.detectWindowWidth()
+                        }, true);
+                            
                     })
                 },
                 methods: {
+                    detectWindowWidth(){
+                        const ori_status = this.isMb; 
+                        if(window.innerWidth <= 767 && !this.isMb) {
+                            this.isMb = true; 
+                            this.sticky.destroy(); 
+                            this.sticky = new Sticky('.sticky');
+                        } else if(window.innerWidth > 767 && this.isMb) {
+                            this.isMb = false; 
+                            this.sticky.destroy(); 
+                            this.sticky = new Sticky('.sticky');
+                        }
+                        
+                    },
                     loadMenu() {
                         const main = axios.get("assets/json/find_main_list.json");
                         const sub = axios.get("assets/json/find_sub_list.json");
@@ -178,7 +201,7 @@
                             this.main_list = main_list;
                             this.sub_list = sub_list;
                             this.extra_list = extra_list;
-                            this.menu_width = this.main_list.length * 80;
+                            this.menu_width = this.main_list.length * 80; // 選單總寬度
                         })).catch(errors => {
                             console.error(errors);
                             // react on errors.
@@ -200,7 +223,6 @@
                         }
                     },
                     mouseLeave() {
-                        console.log('leave');
                         this.current_main_menu = null;
                     },
                 }
@@ -237,7 +259,6 @@
             </div>
 
 
-
             <div id="tab1" class="container tab_area" v-if="indexData.length">
                 <div class="tab">
                     <ul :style="{'width': tab1_width+ 'px'}">
@@ -247,7 +268,7 @@
                     </ul>
                 </div>
 
-                <div class="mb_scroll">
+                <div class="mb_scroll"> <!-- 手機版此div才有作用for左右scrolling -->
                     <div class="row content_list" v-for="(row, idx) in indexData[1].datalist"
                         :class="{'active': idx === current_tab1 }" :style="{width: listWidth(1, idx)}">
                         <div class="col-sm-6 col-md-4 col-lg-3" v-for="(list, index) in row.products_list">
@@ -317,7 +338,7 @@
                     </ul>
                 </div>
 
-                <div class="mb_scroll">
+                <div class="mb_scroll">  <!-- 手機版此div才有作用for左右scrolling -->
                     <div class="row content_list" v-for="(row, idx) in indexData[3].datalist"
                         :class="{'active': idx === current_tab2 }" :style="{width: listWidth(3, idx)}">
                         <div class="col-sm-6 col-md-4 col-lg-3" v-for="(list, index) in row.products_list">
@@ -387,7 +408,7 @@
                     </ul>
                 </div>
 
-                <div class="mb_scroll">
+                <div class="mb_scroll">  <!-- 手機版此div才有作用for左右scrolling -->
                     <div class="row content_list" v-for="(row, idx) in indexData[5].datalist"
                         :class="{'active': idx === current_tab3 }" :style="{width: listWidth(5, idx)}">
                         <div class="col-sm-12 col-md-12 col-lg-6">
@@ -431,11 +452,8 @@
 
                     </div>
                 </div>
-
                 <a :href="indexData[5].link.href" class="see_more">{{ indexData[5].link.title }}</a>
             </div> 
-
-
 
 
         </div>
@@ -540,8 +558,6 @@
             });
         </script>
         <!-- content結束 -->
-
-
 
 
         <!-- footer php include -->

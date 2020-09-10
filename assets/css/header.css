@@ -7,6 +7,12 @@ header {
   background-color: #fff;
 }
 
+@media (max-width: 768px) {
+  header .navbar {
+    height: 60px;
+  }
+}
+
 header .navbar * {
   color: #2b2219;
   font-size: 18px;
@@ -14,6 +20,13 @@ header .navbar * {
 
 header .navbar img {
   width: 160px;
+  margin-top: -10px;
+}
+
+@media (max-width: 768px) {
+  header .navbar img {
+    width: 120px;
+  }
 }
 
 header .navbar #site_search {
@@ -22,7 +35,7 @@ header .navbar #site_search {
 
 header .navbar #form_search {
   border-radius: 30px;
-  border: 1px solid #D3D3D3;
+  border: 1px solid #d3d3d3;
 }
 
 header .navbar #form_submit {

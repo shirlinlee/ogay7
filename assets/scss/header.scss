@@ -6,35 +6,40 @@ header {
   z-index: 800;
   background-color: #fff;
   .navbar {
+    @media (max-width: 768px) {
+      height: 60px;
+    }
     * {
       color: #2b2219;
       font-size: 18px;
     }
-    img{
-        width: 160px;
+    img {
+      width: 160px;
+      margin-top: -10px;
+      @media (max-width: 768px) {
+        width: 120px;
+      }
     }
     #site_search {
       position: relative;
     }
-    #form_search{
+    #form_search {
       border-radius: 30px;
-      border: 1px solid #D3D3D3;
+      border: 1px solid #d3d3d3;
     }
-    #form_submit{
-        position: absolute;
-        right: 0;
-        border : 0;
-        color: #000000;
-        top: 0;
-        box-shadow: none;
-        &:hover{
-            background: transparent;
-        }
+    #form_submit {
+      position: absolute;
+      right: 0;
+      border: 0;
+      color: #000000;
+      top: 0;
+      box-shadow: none;
+      &:hover {
+        background: transparent;
+      }
     }
     .text-warning {
       color: #dd4500 !important  ;
     }
   }
- 
 }
-

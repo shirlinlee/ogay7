@@ -67,18 +67,18 @@
                         </form>
                         <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
                             <div class="p-2 pl-lg-4 bd-highlight">
-                                <span class="d-none d-lg-inline-block">購物車 / </span><span class="text-warning"
+                                <span class="d-md-inline-block d-none">購物車 / </span><span class="text-warning"
                                     id="price_in_cart">$0</span>
-                                <a href="cart"><i class="fas fa-shopping-cart d-none"></i></a>
+                                <a href="cart"><i class="fas fa-shopping-cart d-md-none"></i></a>
                             </div>
                             <div class="p-2 bd-highlight">
-                                <a href="favorite"><i class="fab fa-gratipay d-none"></i><span
-                                        class="d-md-block">追蹤清單</span></a>
+                                <a href="favorite"><i class="fab fa-gratipay d-md-none"></i><span
+                                        class="d-md-block d-none">追蹤清單</span></a>
 
                             </div>
                             <div class="p-2 bd-highlight">
-                                <a href="mc_order"><i class="fas fa-user-circle d-none"></i><span
-                                        class="d-md-block">帳戶管理</span></a>
+                                <a href="mc_order"><i class="fas fa-user-circle d-md-none"></i><span
+                                        class="d-md-block d-none">帳戶管理</span></a>
 
                             </div>
                         </div>
@@ -99,15 +99,22 @@
                         :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
                 </ul>
             </div>
-            <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave">
-                <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
-                    <h4>{{ sub_item.category_sub_name }}</h4>
-                    <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
-                    </li>
-                </ul>
+            <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave" @focusout="mouseLeave" v-if="current_main_menu">
+                <div class="for_mb_left">
+                    <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
+                        <h4 :class="{'active': current_extra_menu === idx }" @click="menuHandler('current_sub_menu', idx)">{{ sub_item.category_sub_name }}</h4>
+                        <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-md-none" v-if="filter_mb_extra_list" >
+                    <ul>
+                        <li v-for="extra_item in filter_mb_extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-
         <link rel="stylesheet" href="assets/css/header.css">
         <script>
             var wrapper = new Vue({
@@ -118,7 +125,7 @@
                     extra_list: null,
                     current_main_menu: null,
                     current_sub_menu: '', // category_id
-                    current_extra_menu: '', // category_sub_id
+                    current_extra_menu: 0, // category_sub_id
                     menu_width: 1258, // default: 個別選單寬度80*17個
                 },
                 computed: {
@@ -136,11 +143,20 @@
                             })
                             return filter_data;
                         }
+                    },
+                    filter_mb_extra_list() {
+                        const extra_list = this.filter_rest_list[this.current_extra_menu];
+                        return (extra_list) ? extra_list.extra_list: [];
                     }
                 },
                 mounted() {
                     this.$nextTick(() => {
                         this.loadMenu(); // 撈選單資料
+                        document.addEventListener("click", (e)=>{
+                            const menu = document.getElementById( 'menu' );
+                            const menu_outside_click = ~e.composedPath().indexOf(menu) >= 0;
+                            if(menu_outside_click) this.current_main_menu = null;
+                        });
                     })
                 },
                 methods: {
@@ -170,14 +186,14 @@
 
                     },
                     menuHandler(menuType, index, id) { // 選單切換
-                        this[menuType] = index;
                         switch (menuType) {
                             case 'current_main_menu': {
+                                this[menuType] = index;
                                 this.current_sub_menu = id;
                             }
                             break;
                         case 'current_sub_menu': {
-                            this.current_extra_menu = id;
+                            this.current_extra_menu = index;
                         }
                         break;
 
@@ -374,27 +390,27 @@
                 <div class="mb_scroll">
                     <div class="row content_list" v-for="(row, idx) in indexData[5].datalist"
                         :class="{'active': idx === current_tab3 }" :style="{width: listWidth(5, idx)}">
-                        <div class="col-sm-12 col-lg-6">
-                            <div :id="`carousel4$" clss="carousel_type carousel slide" data-ride="carousel" data-interval="4000">
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                            <div id="carousel4" class="carousel_type carousel slide" data-ride="carousel" data-interval="4000" v-if="idx === current_tab3">
                                 <div class="carousel-inner container">
-                                    <div v-for="(slide, index) in row.slider_list" :style="{'background-image': 'url('+ slide.img_src +')'}">
-                                        <img :src="slide.img_src" alt="" class="d-xs-block d-md-none" />
+                                    <div class="carousel-item" :class="{'active': idx == 0 }" v-for="(slide, idx) in row.slider_list" :style="{'background-image': 'url('+ slide.img_src +')'}">
+                                        <img :src="slide.img_src" alt="" width="100%" class="d-md-block d-md-none" /> <!-- 需再992以下就必須顯示 -->
                                     </div>
                                 </div>
-                                <a class="carousel-control-prev carousel_btn" :href="`#carousel4${idx}`" role="button" data-slide="prev">
+                                <a class="carousel-control-prev carousel_btn" href="#carousel4" role="button" data-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                     <span class="sr-only">Previous</span>
                                 </a>
-                                <a class="carousel-control-next carousel_btn" :href="`#carousel4${idx}`" role="button" data-slide="next">
+                                <a class="carousel-control-next carousel_btn" href="#carousel4" role="button" data-slide="next">
                                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                     <span class="sr-only">Next</span>
                                 </a>
                                 <ol class="carousel-indicators">
-                                    <li :data-target="`#carousel4${idx}`" v-for="(slide,idx) in row.slider_list" :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
+                                    <li data-target="#carousel4" v-for="(slide,idx) in row.slider_list" :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
                                 </ol>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-lg-3" v-for="(list, index) in row.products_list">
+                        <div class="col-sm-6 col-md-4 col-lg-3" v-for="(list, index) in row.products_list">
                             <div class="img_wrapper">
                                 <img :src="list.product_main_img" width="100%" alt="">
                                 <span class="label">{{ row.title }}</span>
@@ -431,10 +447,11 @@
                     tab_width: 137,
                     list_item_width: 146,
                     current_tab1: 0,
-                    tab1_width: 558,
                     current_tab2: 0,
                     current_tab3: 0,
-
+                    tab1_width: 0,
+                    tab2_width: 0,
+                    tab3_width: 0,
 
                 },
                 created() {
@@ -529,8 +546,8 @@
 
         <!-- footer php include -->
         <div id="footer">
-            <div class="container mt-5 pt-5 clearfix">
-                <div class="index-for5 mb-5">
+            <div class="container mt-5 pt-4 clearfix">
+                <div class="index-for5 mb-4">
                     <h2 class="mb-3">關於我們</h2>
                     <ul>
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">7YAGO福利網</a></li>
@@ -538,7 +555,7 @@
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">機構團體加入</a></li>
                     </ul>
                 </div>
-                <div class="index-for5 mb-5">
+                <div class="index-for5 mb-4">
                     <h2 class="mb-3">專屬服務</h2>
                     <ul>
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">大宗採購方案</a></li>
@@ -546,14 +563,14 @@
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">異業合作</a></li>
                     </ul>
                 </div>
-                <div class="index-for5 mb-5">
+                <div class="index-for5 mb-4">
                     <h2 class="mb-3">會員權益</h2>
                     <ul>
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">隱私權政策</a></li>
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">電子商務條款</a></li>
                     </ul>
                 </div>
-                <div class="index-for5 mb-5">
+                <div class="index-for5 mb-4">
                     <h2 class="mb-3">常見問題</h2>
                     <ul>
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">訂單出貨流程說明</a></li>
@@ -562,7 +579,7 @@
                         <li><a href="http://" target="_blank" rel="noopener noreferrer">聯絡我們</a></li>
                     </ul>
                 </div>
-                <div class="index-for5 mb-5">
+                <div class="index-for5 mb-4">
                     <h2 class="mb-3">隨身好助理</h2>
                     <img src="assets/images/qrcode.png" alt="" class="img-fluid w-75">
                 </div>

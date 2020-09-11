@@ -725,6 +725,13 @@ html {
   }
 }
 
+@media (max-width: 575px) {
+  #product {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 #product .bread {
   height: 51px;
   line-height: 51px;
@@ -919,6 +926,107 @@ html {
 
 #product .flex .detail_content .btn_area {
   margin-top: 18px;
+}
+
+#product .fixed_btn {
+  width: 68px;
+  right: 10px;
+  bottom: 50%;
+  transform: translate(0, 50%);
+  -webkit-transform: translate(0, 50%);
+  -moz-transform: translate(0, 50%);
+  -ms-transform: translate(0, 50%);
+  -o-transform: translate(0, 50%);
+  z-index: 100;
+}
+
+@media (max-width: 767px) {
+  #product .fixed_btn {
+    width: 100%;
+    height: 50px;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    -webkit-transform: none;
+    -moz-transform: none;
+    -ms-transform: none;
+    -o-transform: none;
+    display: none;
+  }
+  #product .fixed_btn.active {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+
+#product .fixed_btn button {
+  cursor: pointer;
+  -webkit-appearance: none;
+  border: none;
+  width: 100%;
+  height: 100px;
+  padding: 12px 0;
+  color: #fff;
+  background-color: #dd4519;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1.5;
+  height: 100px;
+  margin-bottom: 3px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+#product .fixed_btn button:hover {
+  opacity: .95;
+}
+
+#product .fixed_btn button.goTop {
+  background-color: #6e6e6e;
+}
+
+#product .fixed_btn button.goTop img {
+  width: 24px;
+}
+
+@media (max-width: 767px) {
+  #product .fixed_btn button.goTop {
+    position: absolute;
+    top: -50px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 5px;
+  }
+  #product .fixed_btn button.goTop img {
+    width: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  #product .fixed_btn button {
+    width: 50%;
+    height: 100%;
+    display: inline-block;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+  }
+  #product .fixed_btn button.cart {
+    background-color: #f46e48;
+  }
+}
+
+#product .fixed_btn button img {
+  display: block;
+  margin: 0 auto 3px;
+  width: 27px;
 }
 
 #product .title {

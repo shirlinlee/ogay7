@@ -539,6 +539,11 @@ html {
     }
   }
   button {
+    @media (min-width: 992px) {
+      &:hover {
+        opacity: 0.95;
+      }
+    }
     &.W100 {
       width: 100%;
       border-width: 1px;
@@ -635,16 +640,19 @@ html {
     * {
       font-size: 16px;
       font-weight: normal;
+      list-style: none;
     }
     ul {
       padding: 0;
     }
-    li {
-      line-height: 56px;
-      list-style: none;
-      padding: 0 20px;
-      h3 {
+    > ul {
+      > li {
         line-height: 56px;
+        list-style: none;
+        padding: 0 20px;
+        h3 {
+          line-height: 56px;
+        }
       }
     }
     > ul {
@@ -662,13 +670,30 @@ html {
         }
         .sub_ul {
           display: none;
-          li {
+          h5 {
             line-height: 45px;
             border-radius: 5px;
             padding: 0 10px;
             &.active {
               background-color: #dd4519;
               color: #fff;
+            }
+          }
+          li {
+          }
+        }
+        .extra_ul {
+          li {
+            line-height: 30px;
+            margin: 5px 0;
+            padding-left: 20px;
+            a {
+              line-height: 30px;
+              color: #525252;
+              &.active {
+                color: #dd4519;
+                font-weight: bold;
+              }
             }
           }
         }
@@ -764,13 +789,13 @@ html {
     width: 68px;
     right: 10px;
     bottom: 50%;
-    transform: translate(0,50%);
-    -webkit-transform: translate(0,50%);
-    -moz-transform: translate(0,50%);
-    -ms-transform: translate(0,50%);
-    -o-transform: translate(0,50%);
+    transform: translate(0, 50%);
+    -webkit-transform: translate(0, 50%);
+    -moz-transform: translate(0, 50%);
+    -ms-transform: translate(0, 50%);
+    -o-transform: translate(0, 50%);
     z-index: 100;
-    @media(max-width: 767px) {
+    @media (max-width: 767px) {
       width: 100%;
       height: 50px;
       bottom: 0;
@@ -804,8 +829,10 @@ html {
       -moz-border-radius: 5px;
       -ms-border-radius: 5px;
       -o-border-radius: 5px;
-      &:hover {
-        opacity: .95;
+      @media (min-width: 992px) {
+        &:hover {
+          opacity: 0.95;
+        }
       }
       &.goTop {
         background-color: #6e6e6e;
@@ -842,7 +869,7 @@ html {
         margin: 0 auto 3px;
         width: 27px;
       }
-}
+    }
   }
 
   .title {

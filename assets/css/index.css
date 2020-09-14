@@ -656,6 +656,12 @@ html {
   border-left: 1px solid #d0d0d0;
 }
 
+@media (min-width: 992px) {
+  .btn_area button:hover {
+    opacity: 0.95;
+  }
+}
+
 .btn_area button.W100 {
   width: 100%;
   border-width: 1px;
@@ -773,19 +779,20 @@ html {
 #product #tab_list * {
   font-size: 16px;
   font-weight: normal;
+  list-style: none;
 }
 
 #product #tab_list ul {
   padding: 0;
 }
 
-#product #tab_list li {
+#product #tab_list > ul > li {
   line-height: 56px;
   list-style: none;
   padding: 0 20px;
 }
 
-#product #tab_list li h3 {
+#product #tab_list > ul > li h3 {
   line-height: 56px;
 }
 
@@ -810,15 +817,31 @@ html {
   display: none;
 }
 
-#product #tab_list > ul > li .sub_ul li {
+#product #tab_list > ul > li .sub_ul h5 {
   line-height: 45px;
   border-radius: 5px;
   padding: 0 10px;
 }
 
-#product #tab_list > ul > li .sub_ul li.active {
+#product #tab_list > ul > li .sub_ul h5.active {
   background-color: #dd4519;
   color: #fff;
+}
+
+#product #tab_list > ul > li .extra_ul li {
+  line-height: 30px;
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+#product #tab_list > ul > li .extra_ul li a {
+  line-height: 30px;
+  color: #525252;
+}
+
+#product #tab_list > ul > li .extra_ul li a.active {
+  color: #dd4519;
+  font-weight: bold;
 }
 
 #product .img_wrapper .img_nav {
@@ -981,8 +1004,10 @@ html {
   -o-border-radius: 5px;
 }
 
-#product .fixed_btn button:hover {
-  opacity: .95;
+@media (min-width: 992px) {
+  #product .fixed_btn button:hover {
+    opacity: 0.95;
+  }
 }
 
 #product .fixed_btn button.goTop {

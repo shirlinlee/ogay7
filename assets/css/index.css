@@ -239,7 +239,6 @@ html {
   height: 51px;
   border-bottom: 3px solid #eaa693;
   margin-bottom: 20px;
-  overflow-x: scroll;
   background-color: #f8f8f8;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
@@ -250,6 +249,7 @@ html {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     background-color: transparent;
+    overflow-x: scroll;
   }
 }
 
@@ -305,7 +305,12 @@ html {
 
 .tab_area .mb_scroll {
   width: 100%;
-  overflow-x: scroll;
+}
+
+@media (max-width: 767px) {
+  .tab_area .mb_scroll {
+    overflow-x: scroll;
+  }
 }
 
 .tab_area .content_list {
@@ -651,7 +656,7 @@ html {
 }
 
 .btn_area .count input {
-  width: 100%;
+  width: calc(100% - 100px);
   border-right: 1px solid #d0d0d0;
   border-left: 1px solid #d0d0d0;
 }

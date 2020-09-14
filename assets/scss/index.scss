@@ -195,7 +195,6 @@ html {
     height: 51px;
     border-bottom: 3px solid #eaa693;
     margin-bottom: 20px;
-    overflow-x: scroll;
     background-color: #f8f8f8;
     border-top-right-radius: 15px;
     border-top-left-radius: 15px;
@@ -203,6 +202,7 @@ html {
       border-top-right-radius: 0;
       border-top-left-radius: 0;
       background-color: transparent;
+      overflow-x: scroll;
     }
     @media (max-width: 575px) {
       width: calc(100% - 40px);
@@ -250,7 +250,9 @@ html {
   }
   .mb_scroll {
     width: 100%;
-    overflow-x: scroll;
+    @media (max-width: 767px) {
+      overflow-x: scroll;
+    }
   }
   .content_list {
     display: none;
@@ -533,7 +535,7 @@ html {
       background-color: #fff;
     }
     input {
-      width: 100%;
+      width: calc(100% - 100px);
       border-right: 1px solid #d0d0d0;
       border-left: 1px solid #d0d0d0;
     }

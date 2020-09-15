@@ -14,7 +14,8 @@
     <base href="">
     <!-- <link rel="stylesheet" href="assets/css/all.css"> -->
     <link rel="stylesheet" href="assets/css/index.css">
-
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="assets/js/jquery-3.4.1.min.js"></script>
     <script src="assets/js/bootstrap4/popper.min.js"></script>
     <script src="assets/js/vue/vue.js"></script>
@@ -93,139 +94,159 @@
 
         <!-- 以下menu開始，menu中間卡著一個kv輪播，所以使用absolute定位 -->
         <div id="menu" class="sticky" :data-margin-top="(isMb)? 60 :90">
-            <div class="container" :style="{'max-width': menu_width+'px' }">
+            <div class="container"
+                :style="{'max-width': menu_width+'px', 'overflow-x': show_menu_scroll ? 'scroll': 'hidden' }">
                 <ul :style="{'width': menu_width+'px' }" class="main_menu">
                     <li class="d-inline-block" v-for="(item, index) in main_list"
                         @click="menuHandler('current_main_menu', index, item.category_id)"
                         :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
                 </ul>
             </div>
-            <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave" @focusout="mouseLeave" v-if="current_main_menu">
+            <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave"
+                @focusout="mouseLeave" v-if="current_main_menu">
                 <div class="for_mb_left">
                     <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
-                        <h4 :class="{'active': current_extra_menu === idx }" @click="menuHandler('current_sub_menu', idx)">{{ sub_item.category_sub_name }}</h4>
-                        <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
+                        <h4 :class="{'active': current_extra_menu === idx }"
+                            @click="menuHandler('current_sub_menu', idx)">{{ sub_item.category_sub_name }}</h4>
+                        <li v-for="extra_item in sub_item.extra_list"><a
+                                href="#">{{ extra_item.category_extra_name}}</a>
                         </li>
                     </ul>
                 </div>
-                <div class="d-md-none" v-if="filter_mb_extra_list" >
+                <div class="d-md-none" v-if="filter_mb_extra_list">
                     <ul>
-                        <li v-for="extra_item in filter_mb_extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
+                        <li v-for="extra_item in filter_mb_extra_list"><a
+                                href="#">{{ extra_item.category_extra_name}}</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
         <link rel="stylesheet" href="assets/css/header.css">
-        <script>
+        <script type="text/babel">
             var wrapper = new Vue({
-                el: '#menu',
+                el: "#menu",
                 data: {
                     main_list: null,
                     sub_list: null,
                     extra_list: null,
                     current_main_menu: null,
-                    current_sub_menu: '', // category_id
+                    current_sub_menu: "", // category_id
                     current_extra_menu: 0, // category_sub_id
-                    menu_width: 1258, // default: 個別選單寬度80*17個
+                    menu_width: 1360, // default: 個別選單寬度80*17個
                     isMb: true,
                     sticky: null,
+                    show_menu_scroll: true,
                 },
                 computed: {
-                    filter_rest_list() { //主選單對應之次選單
+                    filter_rest_list: function () {
+                        const _this = this;
+                        //主選單對應之次選單
                         if (this.sub_list) {
-                            const filter_data = this.sub_list.filter(item => {
-                                const inner_list = this.extra_list.filter(extra => {
+                            const filter_data = this.sub_list.filter(function (item) {
+                                const inner_list = _this.extra_list.filter(function (extra) {
                                     return extra.category_sub_id === item.category_sub_id;
-                                })
-                                if (item.category_id === this
-                                    .current_sub_menu) { // 把對應extra_list塞入sub_list
-                                    item['extra_list'] = inner_list;
+                                });
+                                if (item.category_id === _this.current_sub_menu) {
+                                    // 把對應extra_list塞入sub_list
+                                    item["extra_list"] = inner_list;
                                 }
-                                return item.category_id === this.current_sub_menu;
-                            })
+                                return item.category_id === _this.current_sub_menu;
+                            });
                             return filter_data;
                         }
                     },
-                    filter_mb_extra_list() { //次選單對應之下層選單，手機版使用
+                    filter_mb_extra_list: function () {
+                        //次選單對應之下層選單，手機版使用
                         const extra_list = this.filter_rest_list[this.current_extra_menu];
-                        return (extra_list) ? extra_list.extra_list: [];
-                    }
+                        return extra_list ? extra_list.extra_list : [];
+                    },
                 },
-                mounted() {
+                mounted: function () {
                     const _this = this;
-                    this.$nextTick(() => {
-                        this.sticky = new Sticky('.sticky');
-                        this.detectWindowWidth()
-                        this.loadMenu(); // 撈選單資料
-                        document.addEventListener("click", e => { // 選單展開後，點非menu內的物件，即關閉選單
-                            const menu = document.getElementById( 'menu' );
+                    this.$nextTick(function () {
+                        _this.sticky = new Sticky(".sticky");
+                        _this.detectWindowWidth();
+                        _this.loadMenu(); // 撈選單資料
+                        document.addEventListener("click", function (e) {
+                            // 選單展開後，點非menu內的物件，即關閉選單
+                            const menu = document.getElementById("menu");
                             const menu_outside_click = ~e.composedPath().indexOf(menu) >= 0;
-                            if(menu_outside_click) this.current_main_menu = null;
+                            if (menu_outside_click) _this.current_main_menu = null;
                         });
-                        window.addEventListener('resize', function() { // 偵測是否為手機寬度 767
-                            _this.detectWindowWidth()
-                        }, true);
-                            
-                    })
+                        window.addEventListener(
+                            "resize",
+                            function () {
+                                // 偵測是否為手機寬度 767
+                                _this.detectWindowWidth();
+                            },
+                            true
+                        );
+                    });
                 },
                 methods: {
-                    detectWindowWidth(){
-                        const ori_status = this.isMb; 
-                        if(window.innerWidth <= 767 && !this.isMb) {
-                            this.isMb = true; 
-                            this.sticky.destroy(); 
-                            this.sticky = new Sticky('.sticky');
-                        } else if(window.innerWidth > 767 && this.isMb) {
-                            this.isMb = false; 
-                            this.sticky.destroy(); 
-                            this.sticky = new Sticky('.sticky');
+                    detectWindowWidth: function () {
+                        const ori_status = this.isMb;
+                        if (window.innerWidth <= 767 && !this.isMb) {
+                            this.isMb = true;
+                            this.sticky.destroy();
+                            this.sticky = new Sticky(".sticky");
+                        } else if (window.innerWidth > 767 && this.isMb) {
+                            this.isMb = false;
+                            this.sticky.destroy();
+                            this.sticky = new Sticky(".sticky");
                         }
-                        
+                        this.show_menu_scroll = this.menu_width > ( window.innerWidth - 40);
+                        console.log(this.show_menu_scroll);
                     },
-                    loadMenu() {
+                    loadMenu: function () {
                         const main = axios.get("assets/json/find_main_list.json");
                         const sub = axios.get("assets/json/find_sub_list.json");
                         const extra = axios.get("assets/json/find_extra_list.json");
+                        const _this = this;
 
-                        axios.all([main, sub, extra]).then(axios.spread((...responses) => {
-                            const {
-                                data: main_list
-                            } = responses[0];
-                            const {
-                                data: sub_list
-                            } = responses[1];
-                            const {
-                                data: extra_list
-                            } = responses[2];
-                            this.main_list = main_list;
-                            this.sub_list = sub_list;
-                            this.extra_list = extra_list;
-                            this.menu_width = this.main_list.length * 80; // 選單總寬度
-                        })).catch(errors => {
-                            console.error(errors);
-                            // react on errors.
-                        })
-
+                        axios
+                            .all([main, sub, extra])
+                            .then(
+                                axios.spread(function (...responses) {
+                                    const {
+                                        data: main_list
+                                    } = responses[0];
+                                    const {
+                                        data: sub_list
+                                    } = responses[1];
+                                    const {
+                                        data: extra_list
+                                    } = responses[2];
+                                    _this.main_list = main_list;
+                                    _this.sub_list = sub_list;
+                                    _this.extra_list = extra_list;
+                                    _this.menu_width = _this.main_list.length * 80; // 選單總寬度
+                                })
+                            )
+                            .catch(function (errors) {
+                                console.error(errors);
+                                // react on errors.
+                            });
                     },
-                    menuHandler(menuType, index, id) { // 選單切換
+                    menuHandler: function (menuType, index, id) {
+                        // 選單切換
                         switch (menuType) {
-                            case 'current_main_menu': {
+                            case "current_main_menu": {
                                 this[menuType] = index;
                                 this.current_sub_menu = id;
                             }
                             break;
-                        case 'current_sub_menu': {
+                        case "current_sub_menu": {
                             this.current_extra_menu = index;
                         }
                         break;
-
                         }
                     },
-                    mouseLeave() {
+                    mouseLeave: function () {
                         this.current_main_menu = null;
                     },
-                }
+                },
             });
         </script>
         <!-- menu結束 -->
@@ -233,10 +254,11 @@
 
         <!-- 以下content始 -->
         <div id="content">
-            <div id="carouselIndexCaptions" class="carousel slide" data-ride="carousel" data-interval="4000"  v-if="indexData.length">
+            <div id="carouselIndexCaptions" class="carousel slide" data-ride="carousel" data-interval="4000"
+                v-if="indexData.length">
                 <div class="carousel-inner">
-                    <div class="carousel-item" :class="{'active': idx == 0 }"
-                        :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData[0].datalist">
+                    <div class="carousel-item" :class="{'active': idx == 0 }" :data-bb="slide.img_src_pc"
+                        v-for="(slide,idx) in indexData[0].datalist">
                         <div :style="{ 'background-color' : slide.bgcolor }">
                             <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block"
                                 rel="noopener noreferrer">
@@ -268,7 +290,8 @@
                     </ul>
                 </div>
 
-                <div class="mb_scroll"> <!-- 手機版此div才有作用for左右scrolling -->
+                <div class="mb_scroll">
+                    <!-- 手機版此div才有作用for左右scrolling -->
                     <div class="row content_list" v-for="(row, idx) in indexData[1].datalist"
                         :class="{'active': idx === current_tab1 }" :style="{width: listWidth(1, idx)}">
                         <div class="col-sm-6 col-md-4 col-lg-3" v-for="(list, index) in row.products_list">
@@ -284,7 +307,8 @@
                                 <span class="f_grey suggest_price">原價
                                     <span>{{ list.product_suggest_price }}</span></span>
                                 <font class="d-inline-block"
-                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}" v-if="list['tag-text']">
+                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}"
+                                    v-if="list['tag-text']">
                                     {{ list['tag-text'] }}</font>
                                 <h5 class="f_orange price">{{ list.product_selling_price }}</h5>
                             </div>
@@ -294,14 +318,15 @@
                 </div>
 
                 <a :href="indexData[1].link.href" class="see_more">{{ indexData[5].link.title }}</a>
-            </div> 
+            </div>
 
 
 
-            <div id="carousel2" class="carousel_type carousel slide" data-ride="carousel" data-interval="4000" v-if="indexData.length">
+            <div id="carousel2" class="carousel_type carousel slide" data-ride="carousel" data-interval="4000"
+                v-if="indexData.length">
                 <div class="carousel-inner container">
-                    <div class="carousel-item" :class="{'active': idx == 0 }"
-                        :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData[2].datalist">
+                    <div class="carousel-item" :class="{'active': idx == 0 }" :data-bb="slide.img_src_pc"
+                        v-for="(slide,idx) in indexData[2].datalist">
                         <div :style="{ 'background-color' : slide.bgcolor }">
                             <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block"
                                 rel="noopener noreferrer">
@@ -321,9 +346,10 @@
                         <span class="sr-only">Next</span>
                     </a>
                     <ol class="carousel-indicators">
-                        <li data-target="#carousel2" v-for="(slide,idx) in indexData[2].datalist" :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
+                        <li data-target="#carousel2" v-for="(slide,idx) in indexData[2].datalist" :data-slide-to="idx"
+                            :class="{'active': idx === 0 }"></li>
                     </ol>
-                    
+
                 </div>
 
             </div>
@@ -338,7 +364,8 @@
                     </ul>
                 </div>
 
-                <div class="mb_scroll">  <!-- 手機版此div才有作用for左右scrolling -->
+                <div class="mb_scroll">
+                    <!-- 手機版此div才有作用for左右scrolling -->
                     <div class="row content_list" v-for="(row, idx) in indexData[3].datalist"
                         :class="{'active': idx === current_tab2 }" :style="{width: listWidth(3, idx)}">
                         <div class="col-sm-6 col-md-4 col-lg-3" v-for="(list, index) in row.products_list">
@@ -354,7 +381,8 @@
                                 <span class="f_grey suggest_price">原價
                                     <span>{{ list.product_suggest_price }}</span></span>
                                 <font class="d-inline-block"
-                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}" v-if="list['tag-text']">
+                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}"
+                                    v-if="list['tag-text']">
                                     {{ list['tag-text'] }}</font>
                                 <h5 class="f_orange price">{{ list.product_selling_price }}</h5>
                             </div>
@@ -368,10 +396,11 @@
 
 
 
-            <div id="carousel3" class="carousel_type carousel slide" data-ride="carousel" data-interval="4000" v-if="indexData.length">
+            <div id="carousel3" class="carousel_type carousel slide" data-ride="carousel" data-interval="4000"
+                v-if="indexData.length">
                 <div class="carousel-inner container">
-                    <div class="carousel-item" :class="{'active': idx == 0 }"
-                        :data-bb="slide.img_src_pc" v-for="(slide,idx) in indexData[4].datalist">
+                    <div class="carousel-item" :class="{'active': idx == 0 }" :data-bb="slide.img_src_pc"
+                        v-for="(slide,idx) in indexData[4].datalist">
                         <div :style="{ 'background-color' : slide.bgcolor }">
                             <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block"
                                 rel="noopener noreferrer">
@@ -391,9 +420,10 @@
                         <span class="sr-only">Next</span>
                     </a>
                     <ol class="carousel-indicators">
-                        <li data-target="#carousel3" v-for="(slide,idx) in indexData[4].datalist" :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
+                        <li data-target="#carousel3" v-for="(slide,idx) in indexData[4].datalist" :data-slide-to="idx"
+                            :class="{'active': idx === 0 }"></li>
                     </ol>
-                    
+
                 </div>
 
             </div>
@@ -408,26 +438,34 @@
                     </ul>
                 </div>
 
-                <div class="mb_scroll">  <!-- 手機版此div才有作用for左右scrolling -->
+                <div class="mb_scroll">
+                    <!-- 手機版此div才有作用for左右scrolling -->
                     <div class="row content_list" v-for="(row, idx) in indexData[5].datalist"
                         :class="{'active': idx === current_tab3 }" :style="{width: listWidth(5, idx)}">
                         <div class="col-sm-12 col-md-12 col-lg-6">
-                            <div id="carousel4" class="carousel_type carousel slide" data-ride="carousel" data-interval="4000" v-if="idx === current_tab3">
+                            <div id="carousel4" class="carousel_type carousel slide" data-ride="carousel"
+                                data-interval="4000" v-if="idx === current_tab3">
                                 <div class="carousel-inner container">
-                                    <div class="carousel-item" :class="{'active': idx == 0 }" v-for="(slide, idx) in row.slider_list" :style="{'background-image': 'url('+ slide.img_src +')'}">
-                                        <img :src="slide.img_src" alt="" width="100%" class="d-md-block d-md-none" /> <!-- 需再992以下就必須顯示 -->
+                                    <div class="carousel-item" :class="{'active': idx == 0 }"
+                                        v-for="(slide, idx) in row.slider_list"
+                                        :style="{'background-image': 'url('+ slide.img_src +')'}">
+                                        <img :src="slide.img_src" alt="" width="100%" class="d-md-block d-md-none" />
+                                        <!-- 需再992以下就必須顯示 -->
                                     </div>
                                 </div>
-                                <a class="carousel-control-prev carousel_btn" href="#carousel4" role="button" data-slide="prev">
+                                <a class="carousel-control-prev carousel_btn" href="#carousel4" role="button"
+                                    data-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                     <span class="sr-only">Previous</span>
                                 </a>
-                                <a class="carousel-control-next carousel_btn" href="#carousel4" role="button" data-slide="next">
+                                <a class="carousel-control-next carousel_btn" href="#carousel4" role="button"
+                                    data-slide="next">
                                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                     <span class="sr-only">Next</span>
                                 </a>
                                 <ol class="carousel-indicators">
-                                    <li data-target="#carousel4" v-for="(slide,idx) in row.slider_list" :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
+                                    <li data-target="#carousel4" v-for="(slide,idx) in row.slider_list"
+                                        :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
                                 </ol>
                             </div>
                         </div>
@@ -444,7 +482,8 @@
                                 <span class="f_grey suggest_price">原價
                                     <span>{{ list.product_suggest_price }}</span></span>
                                 <font class="d-inline-block"
-                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}" v-if="list['tag-text']">
+                                    :style="{'color': list['tag-color'], 'border-color': list['tag-color']}"
+                                    v-if="list['tag-text']">
                                     {{ list['tag-text'] }}</font>
                                 <h5 class="f_orange price">{{ list.product_selling_price }}</h5>
                             </div>
@@ -453,11 +492,11 @@
                     </div>
                 </div>
                 <a :href="indexData[5].link.href" class="see_more">{{ indexData[5].link.title }}</a>
-            </div> 
+            </div>
 
 
         </div>
-        <script>
+        <script type="text/babel">
             var wrapper = new Vue({
                 el: '#content',
                 data: {
@@ -472,10 +511,10 @@
                     tab3_width: 0,
 
                 },
-                created() {
+                created: function () {
                     this.index();
                 },
-                mounted() {
+                mounted: function () {
                     var _this = this;
                     _this.loadAndPop();
                     // 上下頁照params改動
@@ -511,8 +550,10 @@
                     },
                     listWidth: function (tabIndex, listIndex) {
                         // console.log(tabIndex, listIndex)
-                        const totalListWidth = (this.indexData) ? this.indexData[tabIndex].datalist[listIndex]
-                            .products_list.length * this.list_item_width + 40 : 0; //取得該資料長度 * 每欄固定寬度 + padding左右各20
+                        const totalListWidth = (this.indexData) ? this.indexData[tabIndex].datalist[
+                                listIndex]
+                            .products_list.length * this.list_item_width + 40 :
+                            0; //取得該資料長度 * 每欄固定寬度 + padding左右各20
                         return totalListWidth + 'px';
                     },
                     loadAndPop: function () {

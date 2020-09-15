@@ -61,7 +61,6 @@ html {
 }
 
 #menu .container {
-  overflow-x: scroll;
   position: relative;
   width: calc(100% - 40px);
 }
@@ -307,7 +306,7 @@ html {
   width: 100%;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .tab_area .mb_scroll {
     overflow-x: scroll;
   }
@@ -746,30 +745,61 @@ html {
 #product .bread {
   height: 51px;
   line-height: 51px;
-  padding: 0 30px;
+  padding: 0 0 0 30px;
   background-color: #fffaf7;
   border-bottom: solid 1px #dd4519;
   margin-bottom: 55px;
+  overflow: hidden;
 }
 
 @media (max-width: 991px) {
   #product .bread {
-    padding: 0 20px;
+    padding: 0 0 0 20px;
     margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 413px) {
+  #product .bread {
+    padding: 0 0 0 14px;
   }
 }
 
 #product .bread a {
   color: #4e4e4e;
   padding: 0 10px 0 0;
+  float: left;
+  vertical-align: top;
 }
 
 #product .bread a.active {
   color: #dd4519;
 }
 
+@media (max-width: 413px) {
+  #product .bread a {
+    padding: 0 4px 0 0;
+  }
+  #product .bread a.mb_shorten {
+    width: 55px;
+    overflow: hidden;
+    height: 51px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+}
+
 #product .bread span {
+  float: left;
   padding: 0 10px 0 0;
+}
+
+@media (max-width: 413px) {
+  #product .bread span {
+    padding: 0 4px 0 0;
+  }
 }
 
 #product #tab_list h4 {

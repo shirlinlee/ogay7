@@ -51,7 +51,7 @@ html {
     top: 100.5vw;
   }
   .container {
-    overflow-x: scroll;
+    // overflow-x: scroll;
     position: relative;
     width: calc(100% - 40px);
   }
@@ -250,7 +250,7 @@ html {
   }
   .mb_scroll {
     width: 100%;
-    @media (max-width: 767px) {
+    @media (max-width: 575px) {
       overflow-x: scroll;
     }
   }
@@ -611,23 +611,45 @@ html {
   .bread {
     height: 51px;
     line-height: 51px;
-    padding: 0 30px;
+    padding: 0 0 0 30px;
     background-color: #fffaf7;
     border-bottom: solid 1px #dd4519;
     margin-bottom: 55px;
+    overflow: hidden;
     @media (max-width: 991px) {
-      padding: 0 20px;
+      padding: 0 0 0 20px;
       margin-bottom: 20px;
     }
-    a {
+    @media (max-width: 413px) {
+      padding: 0 0 0 14px;
+    }
+    a { 
       color: #4e4e4e;
       padding: 0 10px 0 0;
+      float: left;
+      vertical-align: top;
       &.active {
         color: #dd4519;
       }
+      @media (max-width: 413px) {
+        padding: 0 4px 0 0;
+        &.mb_shorten {
+          width: 55px;
+          overflow: hidden;
+          height: 51px;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+      }
     }
     span {
+      float: left;
       padding: 0 10px 0 0;
+      @media (max-width: 413px) {
+        padding: 0 4px 0 0;
+      }
     }
   }
   #tab_list {

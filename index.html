@@ -254,12 +254,12 @@
 
         <!-- 以下content始 -->
         <div id="content">
-            <div id="carouselIndexCaptions" class="carousel slide" data-ride="carousel" data-interval="4000"
+            <div id="carouselIndexCaptions" class="carousel slide carousel-fade" data-ride="carousel" data-interval="4000"
                 v-if="indexData.length">
                 <div class="carousel-inner">
                     <div class="carousel-item" :class="{'active': idx == 0 }" :data-bb="slide.img_src_pc"
                         v-for="(slide,idx) in indexData[0].datalist">
-                        <div :style="{ 'background-color' : slide.bgcolor }">
+                        <div class="container" :style="{ 'background-color' : slide.bgcolor }">
                             <a :href="slide.target_link" :target="slide.target" class="d-none d-md-block"
                                 rel="noopener noreferrer">
                                 <img :src="slide.img_src_pc" class="d-block w-100" :alt="slide.subject">
@@ -268,16 +268,20 @@
                                 class="d-xs-block d-md-none"><img :src="slide.img_src_m" class="d-block w-100"
                                     alt=""></a>
                         </div>
+                        <div class="blur_bg" :style="{'background-image': 'url(' + slide.img_src_pc + ')'}"></div>
                     </div>
                 </div>
-                <a class="carousel-control-prev" href="#carouselIndexCaptions" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselIndexCaptions" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
+                <div class="container arrow">
+                    <a class="carousel-control-prev" href="#carouselIndexCaptions" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselIndexCaptions" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                
             </div>
 
 

@@ -305,8 +305,8 @@
                   <div class="img_nav">
                     <div class="for_scroll" :style="{'width':img_nav_width+ 'px', 'margin-left': slider_left+'px' }">
                       <img v-for="(slide,idx) in productData.info.product_img_array" :src="slide"
-                        :class="{'active':idx === current_img}" @click="imgHandler(idx, 'direct')" width="100%"
-                        alt="" />
+                        :class="{'active':idx === current_img}" :style="{'width': pic_width + 'px' }"
+                        @click="imgHandler(idx, 'direct')" width="100%" alt="" />
                     </div>
 
                     <a href="javascript:;" class="arrow right" @click="imgHandler(1, 'arrow')"><img
@@ -408,7 +408,7 @@
           current_img: 0,
           slider_left: 0,
           img_nav_width: 0,
-          pic_width: 136,
+          slide_nav_width: 81.6,  // 總寬408 共五個元件 => 408/5 = 81.6 
           showFixedItemVal: 0,
           showFixedItem: false,
         },
@@ -469,6 +469,10 @@
             const extra_list = this.filter_rest_list[this.current_extra_menu];
             return extra_list ? extra_list.extra_list : [];
           },
+          pic_width() {
+            const marginLeftRight = (window.innerWidth >= 1280)? 18 : 10
+            return this.slide_nav_width - marginLeftRight;  //margin左右各9 
+          }
         },
         methods: {
           goToTop: function () {
@@ -495,9 +499,9 @@
           },
           detectSliderWidth: function () {
             if (window.innerWidth >= 1280) {
-              this.pic_width = 136;
+              this.slide_nav_width = 81.6; // 總寬408 共五個元件 => 408/5 = 81.6
             } else {
-              this.pic_width = 46;
+              this.slide_nav_width = 60; // 總寬180 共三個元件 => 180/3 = 70
             }
             this.showFixedItemVal = this.offset(
               document.getElementById("showFixedBtnItem")
@@ -519,7 +523,7 @@
                 _this.productData = product_data;
                 _this.img_nav_width =
                   _this.productData.info.product_img_array.length *
-                  _this.pic_width;
+                  _this.slide_nav_width;
               } else {}
             });
           },
@@ -626,7 +630,7 @@
             this.current_img = new_current;
 
             if (new_current >= 3) {
-              this.slider_left = -this.pic_width * (new_current - 2);
+              this.slider_left = -this.slide_nav_width * (new_current - 2);
               console.log(this.slider_left);
             } else {
               this.slider_left = 0;

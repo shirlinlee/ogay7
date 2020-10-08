@@ -50,7 +50,8 @@
         <img src="assets/images/loading.svg" alt="" width=30 height=30>
     </div>
     <div id="wrapper">
-        <!-- 以下header開始 -->
+
+        <!-- 以下menu開始，menu中間卡著一個kv輪播，所以使用absolute定位 -->
         <header>
             <div class="container">
                 <nav class="navbar navbar-expand navbar-light d-flex justify-content-between">
@@ -62,15 +63,15 @@
                     </button>
                     <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent"
                         style="flex-grow: unset;">
-                        <form class="form-inline d-none d-lg-inline-block" id="site_search">
+                        <!-- <form class="form-inline d-none d-lg-inline-block" id="site_search">
                             <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search"
                                 id="form_search">
                             <button class="btn" type="submit" id="form_submit"><i class="fas fa-search"></i></button>
-                        </form>
+                        </form> -->
                         <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
                             <div class="p-2 pl-lg-4 bd-highlight">
-                                <span class="d-md-inline-block d-none">購物車 / </span><span class="text-warning"
-                                    id="price_in_cart">$0</span>
+                                <span class="d-md-inline-block d-none"><a href="cart">購物車 / </span><span class="text-warning"
+                                    id="price_in_cart">$<?=$this->cart->total()?></span></a>
                                 <a href="cart"><i class="fas fa-shopping-cart d-md-none"></i></a>
                             </div>
                             <div class="p-2 bd-highlight">
@@ -88,11 +89,6 @@
                 </nav>
             </div>
         </header>
-        <!-- header結束 -->
-
-
-
-        <!-- 以下menu開始，menu中間卡著一個kv輪播，所以使用absolute定位 -->
         <div id="menu" class="sticky" :data-margin-top="(isMb)? 60 :90">
             <div class="container"
                 :style="{'max-width': menu_width+'px', 'overflow-x': show_menu_scroll ? 'scroll': 'hidden' }">
@@ -102,34 +98,42 @@
                         :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
                 </ul>
             </div>
-            <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave"
+            <div id="sub_menu" class="container" :class="{'show': current_main_menu !== null}" @mouseleave="mouseLeave"
                 @focusout="mouseLeave" v-if="current_main_menu">
                 <div class="for_mb_left">
-                    <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
+                    <ul v-for="(sub_item, idx) in sub_list" class="d-inline-block">
+                        <h4 :class="{'active': current_extra_menu === idx }"
+                            @click="menuHandler('current_sub_menu', idx , sub_item.category_sub_id )">{{ sub_item.category_sub_name }}</h4>
+                        <li v-for="extra_item in sub_item.extralist"><a :href="'category?category_id=' + current_main_menu + '&category_sub_id=' + sub_item.category_sub_id + '&category_extra_id=' + extra_item.category_extra_id">{{ extra_item.category_extra_name}}</a>
+                        </li>
+                    </ul>
+                    <!-- <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
                         <h4 :class="{'active': current_extra_menu === idx }"
                             @click="menuHandler('current_sub_menu', idx)">{{ sub_item.category_sub_name }}</h4>
                         <li v-for="extra_item in sub_item.extra_list"><a
                                 href="#">{{ extra_item.category_extra_name}}</a>
                         </li>
-                    </ul>
+                    </ul> -->
                 </div>
-                <div class="d-md-none" v-if="filter_mb_extra_list">
+                <div class="d-md-none">
                     <ul>
-                        <li v-for="extra_item in filter_mb_extra_list"><a
-                                href="#">{{ extra_item.category_extra_name}}</a>
+                        <li v-for="extra_item in sub_list[current_extra_menu]['extralist']"><a
+                        :href="'category?category_id=' + current_main_menu + '&category_sub_id=' + current_sub_menu + '&category_extra_id=' + extra_item.category_extra_id">{{ extra_item.category_extra_name}}</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
         <link rel="stylesheet" href="assets/css/header.css">
+
         <script type="text/babel">
-            var wrapper = new Vue({
+            var wrapper_mall_menu = new Vue({
                 el: "#menu",
                 data: {
-                    main_list: null,
-                    sub_list: null,
-                    extra_list: null,
+                    main_list: [],
+                    sub_list: null, //active
+                    extra_list: null, //active
+                    allTree : {},
                     current_main_menu: null,
                     current_sub_menu: "", // category_id
                     current_extra_menu: 0, // category_sub_id
@@ -139,35 +143,36 @@
                     show_menu_scroll: true,
                 },
                 computed: {
-                    filter_rest_list: function () {
-                        const _this = this;
-                        //主選單對應之次選單
-                        if (this.sub_list) {
-                            const filter_data = this.sub_list.filter(function (item) {
-                                const inner_list = _this.extra_list.filter(function (extra) {
-                                    return extra.category_sub_id === item.category_sub_id;
-                                });
-                                if (item.category_id === _this.current_sub_menu) {
-                                    // 把對應extra_list塞入sub_list
-                                    item["extra_list"] = inner_list;
-                                }
-                                return item.category_id === _this.current_sub_menu;
-                            });
-                            return filter_data;
-                        }
-                    },
-                    filter_mb_extra_list: function () {
-                        //次選單對應之下層選單，手機版使用
-                        const extra_list = this.filter_rest_list[this.current_extra_menu];
-                        return extra_list ? extra_list.extra_list : [];
-                    },
+                    // filter_rest_list: function () {
+                    //     const _this = this;
+                    //     //主選單對應之次選單
+                    //     if (this.sub_list) {
+                    //         console.log(this.sub_list)
+                    //         const filter_data = this.sub_list.filter(function (item) {
+                    //             const inner_list = _this.extra_list.filter(function (extra) {
+                    //                 return extra.category_sub_id === item.category_sub_id;
+                    //             });
+                    //             if (item.category_id === _this.current_sub_menu) {
+                    //                 // 把對應extra_list塞入sub_list
+                    //                 item["extra_list"] = inner_list;
+                    //             }
+                    //             return item.category_id === _this.current_sub_menu;
+                    //         });
+                    //         return filter_data;
+                    //     }
+                    // },
+                    // filter_mb_extra_list: function () {
+                    //     //次選單對應之下層選單，手機版使用
+                    //     const extra_list = this.filter_rest_list[this.current_extra_menu];
+                    //     return extra_list ? extra_list.extra_list : [];
+                    // },
                 },
                 mounted: function () {
                     const _this = this;
                     this.$nextTick(function () {
                         _this.sticky = new Sticky(".sticky");
                         _this.detectWindowWidth();
-                        _this.loadMenu(); // 撈選單資料
+                        _this.loadAll(); //載入全部選單
                         document.addEventListener("click", function (e) {
                             // 選單展開後，點非menu內的物件，即關閉選單
                             const menu = document.getElementById("menu");
@@ -197,54 +202,115 @@
                             this.sticky = new Sticky(".sticky");
                         }
                         this.show_menu_scroll = this.menu_width > ( window.innerWidth - 40);
-                        console.log(this.show_menu_scroll);
+                        // console.log(this.show_menu_scroll);
+                    },
+                    loadAll: function () {
+                         //載入全部選單
+                        const _this = this;
+                        axios({
+                            method : 'post',
+                            url : './assets/json/full_tree.json',
+                            responseType : 'json', 
+                        }).then(function(data){
+                            // console.log(data)
+                            if( data.status == 200 ){
+                                var _data = data.data;
+                                
+                                for(var i = 0 ; i < _data.length ; i++){
+                                    // console.log(_data[i])
+                                    var _obj = {}
+                                    _obj['category_id'] = _data[i]['category_id']
+                                    _obj['category_name'] = _data[i]['category_name'];
+                                    _this.main_list.push(_obj);
+                                    _this.allTree[_data[i]['category_id']] = _data[i]['sublist'];
+                                }
+                            }else{
+                            }
+                        })
                     },
                     loadMenu: function () {
-                        const main = axios.get("assets/json/find_main_list.json");
-                        const sub = axios.get("assets/json/find_sub_list.json");
-                        const extra = axios.get("assets/json/find_extra_list.json");
                         const _this = this;
-
-                        axios
-                            .all([main, sub, extra])
-                            .then(
-                                axios.spread(function (...responses) {
-                                    const {
-                                        data: main_list
-                                    } = responses[0];
-                                    const {
-                                        data: sub_list
-                                    } = responses[1];
-                                    const {
-                                        data: extra_list
-                                    } = responses[2];
-                                    _this.main_list = main_list;
-                                    _this.sub_list = sub_list;
-                                    _this.extra_list = extra_list;
-                                    _this.menu_width = _this.main_list.length * 80; // 選單總寬度
-                                })
-                            )
-                            .catch(function (errors) {
-                                console.error(errors);
-                                // react on errors.
-                            });
+                        axios({
+                            method : 'post',
+                            url : './api_category/find_main_list',
+                            responseType : 'json', 
+                        }).then(function(data){
+                            // console.log(data)
+                            if( data.status == 200 ){
+                                _this.main_list = data.data;
+                                // var _length = _this.category.main.length-1;
+                                // _this.selectedIdx.main = allFunc.randomFunc(0,_length);
+                                // callback();
+                            }else{
+                            }
+                            // console.log("!:")
+                            _this.close = {
+                                sub : false,
+                                extra : true
+                            }
+                        })
                     },
                     menuHandler: function (menuType, index, id) {
                         // 選單切換
+                        console.log(menuType)
+                        var _this = this;
                         switch (menuType) {
                             case "current_main_menu": {
                                 this[menuType] = index;
-                                this.current_sub_menu = id;
+                                this.current_main_menu = id;
+                                this.sub_list = _this.allTree[id];
+                                this.current_extra_menu = 0;
+                                // this.extra_list = _this.allTree[id]['extralist'];
+                                // console.log(this.current_sub_menu)
+                                // console.log(this.sub_list)
+                                // console.log(this.extra_list)
                             }
                             break;
-                        case "current_sub_menu": {
-                            this.current_extra_menu = index;
-                        }
-                        break;
+                            case "current_sub_menu": {
+                                this.current_sub_menu = id;
+                                this.current_extra_menu = index;
+                                // this.current_sub_menu = id;
+                                // console.log(this.current_extra_menu)
+                            }
+                            break;
                         }
                     },
                     mouseLeave: function () {
                         this.current_main_menu = null;
+                    },
+                    list_sub : function(categroy){
+                        var _this = this;
+                        axios({
+                            method : 'get',
+                            url : './api_category/find_sub_list',
+                            responseType : 'json', 
+                            params : {
+                                category_id : categroy
+                            }
+                        }).then(function(data){
+                            // console.log(data)
+                            if( data.status == 200 ){
+                                _this.category.sub = data.data;
+                                // console.log("_this.category.sub.length")
+                                // console.log(_this.category.sub.length)
+                                if( _this.category.sub.length == 0 ){
+                                    _this.close = {
+                                        sub : true,
+                                        extra : true
+                                    }
+                                }else{
+                                    _this.close = {
+                                        sub : false,
+                                        extra : true
+                                    }
+                                }
+                                // _this.close = {
+                                //     sub : false,
+                                //     extra : false
+                                // }
+                            }else{
+                            }
+                        })
                     },
                 },
             });

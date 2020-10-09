@@ -150,6 +150,7 @@
           v-if="current_main_menu"
         >
           <div class="for_mb_left">
+            <!-- 1009增加 :style="{'width': hanleSubWidth(sub_item)+'px' }"  -->
             <ul
               v-for="(sub_item, idx) in filter_rest_list"
               :style="{'width': hanleSubWidth(sub_item)+'px' }"
@@ -293,9 +294,10 @@
               }
             },
             mouseLeave: function () {
-              // this.current_main_menu = null;
+              this.current_main_menu = null;
             },
             hanleSubWidth: function (sub_item) {
+              // 1009增加
               const listBreakLine = parseInt(sub_item.extra_list.length / 11);
               return 140 + 140 * listBreakLine;
             },

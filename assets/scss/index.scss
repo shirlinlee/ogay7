@@ -58,7 +58,7 @@ html {
     top: 200px;
   }
   @media (min-width: 1200px) {
-    top: 235px;;
+    top: 235px;
   }
   @media (min-width: 1300px) {
     top: 260px;
@@ -110,10 +110,12 @@ html {
       width: 100%;
       max-width: 100%;
       display: flex !important;
+      max-height: 75vh;
     }
     ul {
       font-size: 14px;
       width: 140px;
+      // width: 280px;
       text-indent: 6px;
       vertical-align: top;
       margin-right: 40px;
@@ -121,9 +123,17 @@ html {
       &:last-child {
         margin-right: 0;
       }
+      @media (min-width: 768px) {
+        height: 100%;
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+        padding-top: 37px;
+        position: relative;
+      }
       @media (max-width: 767px) {
         display: block !important;
-        width: auto;
+        width: auto !important;
         margin-right: 20px;
       }
     }
@@ -133,6 +143,12 @@ html {
       padding-bottom: 10px;
       margin-bottom: 10px;
       border-bottom: #dd4519 1px solid;
+      @media (min-width: 768px) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
       @media (max-width: 767px) {
         color: #838383;
         border-bottom: none;
@@ -153,6 +169,7 @@ html {
       line-height: 1.5;
       text-align: left;
       list-style-type: none;
+      width: 140px;
       @media (max-width: 767px) {
         display: none;
       }
@@ -171,17 +188,32 @@ html {
       display: inline-block;
       min-height: 100px;
       vertical-align: top;
-
+      @media (max-width: 375px) {
+        overflow-x: scroll;
+        padding: 25px 0 25px 25px;
+        width: 100%;
+      }
+      ul {
+        @media (max-width: 767px) {
+          width: 280px !important;
+        }
+      }
       li {
         @media (max-width: 767px) {
-          display: block;
+          display: inline-block;
+          float: left;
         }
       }
     }
     .for_mb_left {
+      @media (min-width: 768px) {
+        display: flex;
+        overflow-x: scroll;
+        max-height: 400px;
+      }
       @media (max-width: 767px) {
         padding: 25px 0;
-        display: inline-block;
+        width: inherit;
         vertical-align: top;
       }
     }
@@ -205,7 +237,7 @@ html {
     background-size: cover;
     top: 0;
     z-index: -1;
-    opacity: .9;
+    opacity: 0.9;
     transform: scale(1.1);
     -webkit-transform: scale(1.1);
     -moz-transform: scale(1.1);
@@ -398,7 +430,7 @@ html {
     @media (min-width: 992px) {
       height: 80px;
       &:hover {
-        background-color: rgba(221,69,25, .6);
+        background-color: rgba(221, 69, 25, 0.6);
       }
     }
   }
@@ -413,7 +445,7 @@ html {
     @media (min-width: 992px) {
       &:hover {
         span {
-          background-color: rgba(221,69,25, .6);
+          background-color: rgba(221, 69, 25, 0.6);
         }
       }
     }
@@ -431,12 +463,11 @@ html {
       &.active {
         background-color: #de4a20;
       }
-    @media (min-width: 992px) {
-      width: 20px;
-      height: 20px;
-      margin: 0 8px;
-
-    }
+      @media (min-width: 992px) {
+        width: 20px;
+        height: 20px;
+        margin: 0 8px;
+      }
     }
   }
 }
@@ -699,7 +730,7 @@ html {
     @media (max-width: 413px) {
       padding: 0 0 0 14px;
     }
-    a { 
+    a {
       color: #4e4e4e;
       padding: 0 10px 0 0;
       float: left;
@@ -764,7 +795,6 @@ html {
             h3 {
               color: #dd4519;
             }
-            
           }
         }
         &.active {
@@ -789,7 +819,7 @@ html {
             }
             @media (min-width: 992px) {
               &:hover {
-                  color: #dd4519;
+                color: #dd4519;
               }
             }
           }
@@ -810,8 +840,8 @@ html {
               }
               @media (min-width: 992px) {
                 &:hover {
-                    color: #dd4519;
-                    text-decoration: none;
+                  color: #dd4519;
+                  text-decoration: none;
                 }
               }
             }
@@ -853,7 +883,7 @@ html {
         background-color: rgba(0, 0, 0, 0.3);
         @media (min-width: 992px) {
           &:hover {
-            background-color: rgba(221,69,25, .6);
+            background-color: rgba(221, 69, 25, 0.6);
           }
         }
         img {
@@ -876,11 +906,11 @@ html {
     .detail_img {
       flex: none;
       @media (min-width: 768px) {
-        width: 210px;  // 180+30
+        width: 210px; // 180+30
         max-width: 210px;
       }
       @media (min-width: 1280px) {
-        width: 438px;  // 408+30
+        width: 438px; // 408+30
         max-width: 438px;
       }
     }

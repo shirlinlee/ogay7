@@ -1,720 +1,892 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>產品頁</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>產品頁</title>
+    <!-- php lib -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/js/bootstrap4/bootstrap.css" />
+    <base href="" />
+    <!-- <link rel="stylesheet" href="assets/css/all.css"> -->
+    <link rel="stylesheet" href="assets/css/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="assets/js/jquery-3.4.1.min.js"></script>
+    <script src="assets/js/bootstrap4/popper.min.js"></script>
+    <script src="assets/js/vue/vue.js"></script>
+    <script src="assets/js/vue/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
+    <script src="assets/js/bootstrap4/bootstrap.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/0e1a09a8fc.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="assets/js/sticky.min.js"></script>
+    <script src="assets/js/allfunc.js"></script>
 
-  <!-- php lib -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="assets/js/bootstrap4/bootstrap.css" />
-  <base href="" />
-  <!-- <link rel="stylesheet" href="assets/css/all.css"> -->
-  <link rel="stylesheet" href="assets/css/index.css" />
-  <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script src="assets/js/jquery-3.4.1.min.js"></script>
-  <script src="assets/js/bootstrap4/popper.min.js"></script>
-  <script src="assets/js/vue/vue.js"></script>
-  <script src="assets/js/vue/axios.min.js"></script>
-  <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
-  <script src="assets/js/bootstrap4/bootstrap.min.js"></script>
-  <script src="https://kit.fontawesome.com/0e1a09a8fc.js" crossorigin="anonymous"></script>
-  <script src="assets/js/sticky.min.js"></script>
-  <script src="assets/js/allfunc.js"></script>
-
-  <!-- php lib -->
-  <style>
-    .loader_inner_wrapper {
-      position: fixed;
-      z-index: 99999;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-    }
-
-    .loader_inner_wrapper img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translateX(-50%) translateY(-50%);
-    }
-  </style>
-</head>
-
-<body>
-  <div class="loader_inner_wrapper text-center d-none" id="st_loading">
-    <img src="assets/images/loading.svg" alt="" width="30" height="30" />
-  </div>
-  <div id="wrapper">
-    <!-- 以下header開始 -->
-    <header>
-      <div class="container">
-        <nav class="navbar navbar-expand navbar-light d-flex justify-content-between">
-          <a href="./" class="navbar-brand"><img class="img-fluid" src="assets/images/logo.png" alt="" /></a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse pt-3 pb-3" id="navbarSupportedContent" style="flex-grow: unset">
-            <form class="form-inline d-none d-lg-inline-block" id="site_search">
-              <input class="form-control" type="search" placeholder="在找什麼嗎？" aria-label="Search" id="form_search" />
-              <button class="btn" type="submit" id="form_submit">
-                <i class="fas fa-search"></i>
-              </button>
-            </form>
-            <div class="d-flex flex-row bd-highlight align-items-center" id="header_func">
-              <div class="p-2 pl-lg-4 bd-highlight">
-                <span class="d-md-inline-block d-none">購物車 / </span><span class="text-warning"
-                  id="price_in_cart">$0</span>
-                <a href="cart"><i class="fas fa-shopping-cart d-md-none"></i></a>
-              </div>
-              <div class="p-2 bd-highlight">
-                <a href="favorite"><i class="fab fa-gratipay d-md-none"></i><span
-                    class="d-md-block d-none">追蹤清單</span></a>
-              </div>
-              <div class="p-2 bd-highlight">
-                <a href="mc_order"><i class="fas fa-user-circle d-md-none"></i><span
-                    class="d-md-block d-none">帳戶管理</span></a>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </header>
-    <!-- header結束 -->
-
-    <!-- 以下menu開始 -->
-    <div id="menu" class="sticky" :data-margin-top="(isMb)? 60 :90">
-      <div class="container"
-        :style="{'max-width': menu_width+'px', 'overflow-x': show_menu_scroll ? 'scroll': 'hidden' }">
-        <ul :style="{'width': menu_width+'px' }" class="main_menu">
-          <li class="d-inline-block" v-for="(item, index) in main_list"
-            @click="menuHandler('current_main_menu', index, item.category_id)"
-            :class="{'active':current_main_menu === index}">{{ item.category_name }}</li>
-        </ul>
-      </div>
-      <div id="sub_menu" class="container" :class="{'show': current_main_menu!== null}" @mouseleave="mouseLeave"
-        @focusout="mouseLeave" v-if="current_main_menu">
-        <div class="for_mb_left">
-          <ul v-for="(sub_item, idx) in filter_rest_list" class="d-inline-block">
-            <h4 :class="{'active': current_extra_menu === idx }" @click="menuHandler('current_sub_menu', idx)">
-              {{ sub_item.category_sub_name }}</h4>
-            <li v-for="extra_item in sub_item.extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
-            </li>
-          </ul>
-        </div>
-        <div class="d-md-none" v-if="filter_mb_extra_list">
-          <ul>
-            <li v-for="extra_item in filter_mb_extra_list"><a href="#">{{ extra_item.category_extra_name}}</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <link rel="stylesheet" href="assets/css/header.css" />
-    <script type="text/babel">
-      var wrapper = new Vue({
-          el: "#menu",
-          data: {
-              main_list: null,
-              sub_list: null,
-              extra_list: null,
-              current_main_menu: null,
-              current_sub_menu: "", // category_id
-              current_extra_menu: 0, // category_sub_id
-              menu_width: 1360, // default: 個別選單寬度80*17個
-              isMb: true,
-              sticky: null,
-              show_menu_scroll: true,
-          },
-          computed: {
-              filter_rest_list: function () {
-                  const _this = this;
-                  //主選單對應之次選單
-                  if (this.sub_list) {
-                      const filter_data = this.sub_list.filter(function (item) {
-                          const inner_list = _this.extra_list.filter(function (extra) {
-                              return extra.category_sub_id === item.category_sub_id;
-                          });
-                          if (item.category_id === _this.current_sub_menu) {
-                              // 把對應extra_list塞入sub_list
-                              item["extra_list"] = inner_list;
-                          }
-                          return item.category_id === _this.current_sub_menu;
-                      });
-                      return filter_data;
-                  }
-              },
-              filter_mb_extra_list: function () {
-                  //次選單對應之下層選單，手機版使用
-                  const extra_list = this.filter_rest_list[this.current_extra_menu];
-                  return extra_list ? extra_list.extra_list : [];
-              },
-          },
-          mounted: function () {
-              const _this = this;
-              this.$nextTick(function () {
-                  _this.sticky = new Sticky(".sticky");
-                  _this.detectWindowWidth();
-                  _this.loadMenu(); // 撈選單資料
-                  document.addEventListener("click", function (e) {
-                      // 選單展開後，點非menu內的物件，即關閉選單
-                      const menu = document.getElementById("menu");
-                      const menu_outside_click = ~e.composedPath().indexOf(menu) >= 0;
-                      if (menu_outside_click) _this.current_main_menu = null;
-                  });
-                  window.addEventListener(
-                      "resize",
-                      function () {
-                          // 偵測是否為手機寬度 767
-                          _this.detectWindowWidth();
-                      },
-                      true
-                  );
-              });
-          },
-          methods: {
-              detectWindowWidth: function () {
-                  const ori_status = this.isMb;
-                  if (window.innerWidth <= 767 && !this.isMb) {
-                      this.isMb = true;
-                      this.sticky.destroy();
-                      this.sticky = new Sticky(".sticky");
-                  } else if (window.innerWidth > 767 && this.isMb) {
-                      this.isMb = false;
-                      this.sticky.destroy();
-                      this.sticky = new Sticky(".sticky");
-                  }
-                  this.show_menu_scroll = this.menu_width > ( window.innerWidth - 40);
-                  console.log(this.show_menu_scroll);
-              },
-              loadMenu: function () {
-                  const main = axios.get("assets/json/find_main_list.json");
-                  const sub = axios.get("assets/json/find_sub_list.json");
-                  const extra = axios.get("assets/json/find_extra_list.json");
-                  const _this = this;
-
-                  axios
-                      .all([main, sub, extra])
-                      .then(
-                          axios.spread(function (...responses) {
-                              const {
-                                  data: main_list
-                              } = responses[0];
-                              const {
-                                  data: sub_list
-                              } = responses[1];
-                              const {
-                                  data: extra_list
-                              } = responses[2];
-                              _this.main_list = main_list;
-                              _this.sub_list = sub_list;
-                              _this.extra_list = extra_list;
-                              _this.menu_width = _this.main_list.length * 80; // 選單總寬度
-                          })
-                      )
-                      .catch(function (errors) {
-                          console.error(errors);
-                          // react on errors.
-                      });
-              },
-              menuHandler: function (menuType, index, id) {
-                  // 選單切換
-                  switch (menuType) {
-                      case "current_main_menu": {
-                          this[menuType] = index;
-                          this.current_sub_menu = id;
-                      }
-                      break;
-                  case "current_sub_menu": {
-                      this.current_extra_menu = index;
-                  }
-                  break;
-                  }
-              },
-              mouseLeave: function () {
-                  this.current_main_menu = null;
-              },
-          },
-      });
-    </script>
+    <!-- php lib -->
     <style>
-      #menu {
+      .loader_inner_wrapper {
         position: fixed;
-        top: 90px;
+        z-index: 99999;
+        width: 100%;
+        height: 100%;
+        background: transparent;
       }
 
-      @media (max-width: 768px) {
-        #menu {
-          top: 60px;
-        }
+      .loader_inner_wrapper img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
       }
     </style>
-    <!-- menu結束 -->
+  </head>
 
-    <!-- 以下產品content始 -->
-    <div id="product">
-      <div class="container">
-        <div class="row">
-          <!-- 左側選單，pc版關閉 -->
-          <div id="tab_list" class="col-lg-2 col-md-3 d-none d-md-block" v-if="productData">
-            <h4>產品分類</h4>
-            <ul>
-              <li v-for="(item, index) in main_list" :class="{'active':current_main_menu === index}"
-                @click="menuHandler('current_main_menu', index, item.category_id)">
-                <h3>{{ item.category_name }}</h3>
-                <ul class="sub_ul">
-                  <li v-for="(sub_item, idx) in filter_rest_list">
-                    <h5 :class="{'active': current_extra_menu === idx}" @click="menuHandler('current_sub_menu', idx)">
-                      {{ sub_item.category_sub_name }}
-                    </h5>
-                    <ul class="extra_ul" v-if="current_extra_menu === idx">
-                      <li v-for="extra_item in filter_mb_extra_list">
-                        <a href="#"
-                          :class="{'active': productData.info.category_extra_id === extra_item.category_extra_id}">{{ extra_item.category_extra_name}}</a>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
+  <body>
+    <div class="loader_inner_wrapper text-center d-none" id="st_loading">
+      <img src="assets/images/loading.svg" alt="" width="30" height="30" />
+    </div>
+    <div id="wrapper">
+      <!-- 以下header開始 -->
+      <header>
+        <div class="container">
+          <nav
+            class="navbar navbar-expand navbar-light d-flex justify-content-between"
+          >
+            <a href="./" class="navbar-brand"
+              ><img class="img-fluid" src="assets/images/logo.png" alt=""
+            /></a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div
+              class="collapse navbar-collapse pt-3 pb-3"
+              id="navbarSupportedContent"
+              style="flex-grow: unset"
+            >
+              <form
+                class="form-inline d-none d-lg-inline-block"
+                id="site_search"
+              >
+                <input
+                  class="form-control"
+                  type="search"
+                  placeholder="在找什麼嗎？"
+                  aria-label="Search"
+                  id="form_search"
+                />
+                <button class="btn" type="submit" id="form_submit">
+                  <i class="fas fa-search"></i>
+                </button>
+              </form>
+              <div
+                class="d-flex flex-row bd-highlight align-items-center"
+                id="header_func"
+              >
+                <div class="p-2 pl-lg-4 bd-highlight">
+                  <span class="d-md-inline-block d-none">購物車 / </span
+                  ><span class="text-warning" id="price_in_cart">$0</span>
+                  <a href="cart"
+                    ><i class="fas fa-shopping-cart d-md-none"></i
+                  ></a>
+                </div>
+                <div class="p-2 bd-highlight">
+                  <a href="favorite"
+                    ><i class="fab fa-gratipay d-md-none"></i
+                    ><span class="d-md-block d-none">追蹤清單</span></a
+                  >
+                </div>
+                <div class="p-2 bd-highlight">
+                  <a href="mc_order"
+                    ><i class="fas fa-user-circle d-md-none"></i
+                    ><span class="d-md-block d-none">帳戶管理</span></a
+                  >
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+      <!-- header結束 -->
+
+      <!-- 以下menu開始 -->
+      <div id="menu" class="sticky" :data-margin-top="(isMb)? 60 :90">
+        <div
+          class="container"
+          :style="{'max-width': menu_width+'px', 'overflow-x': show_menu_scroll ? 'scroll': 'hidden' }"
+        >
+          <ul :style="{'width': menu_width+'px' }" class="main_menu">
+            <li
+              class="d-inline-block"
+              v-for="(item, index) in main_list"
+              @click="menuHandler('current_main_menu', index, item.category_id)"
+              :class="{'active':current_main_menu === index}"
+            >
+              {{ item.category_name }}
+            </li>
+          </ul>
+        </div>
+        <div
+          id="sub_menu"
+          class="container"
+          :class="{'show': current_main_menu!== null}"
+          @mouseleave="mouseLeave"
+          @focusout="mouseLeave"
+          v-if="current_main_menu"
+        >
+          <div class="for_mb_left">
+            <ul
+              v-for="(sub_item, idx) in filter_rest_list"
+              :style="{'width': hanleSubWidth(sub_item)+'px' }"
+              class="mb_extra_list"
+            >
+              <h4
+                :class="{'active': current_extra_menu === idx }"
+                @click="menuHandler('current_sub_menu', idx)"
+              >
+                {{ sub_item.category_sub_name }}
+              </h4>
+              <li v-for="extra_item in sub_item.extra_list">
+                <a href="#">{{ extra_item.category_extra_name}}</a>
               </li>
             </ul>
           </div>
+          <div class="d-md-none" v-if="filter_mb_extra_list">
+            <ul>
+              <li v-for="extra_item in filter_mb_extra_list">
+                <a href="#">{{ extra_item.category_extra_name}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <link rel="stylesheet" href="assets/css/header.css" />
+      <script type="text/babel">
+        var wrapper = new Vue({
+          el: "#menu",
+          data: {
+            main_list: null,
+            sub_list: null,
+            extra_list: null,
+            current_main_menu: null,
+            current_sub_menu: "", // category_id
+            current_extra_menu: 0, // category_sub_id
+            menu_width: 1360, // default: 個別選單寬度80*17個
+            isMb: true,
+            sticky: null,
+            show_menu_scroll: true,
+          },
+          computed: {
+            filter_rest_list: function () {
+              const _this = this;
+              //主選單對應之次選單
+              if (this.sub_list) {
+                const filter_data = this.sub_list.filter(function (item) {
+                  const inner_list = _this.extra_list.filter(function (extra) {
+                    return extra.category_sub_id === item.category_sub_id;
+                  });
+                  if (item.category_id === _this.current_sub_menu) {
+                    // 把對應extra_list塞入sub_list
+                    item["extra_list"] = inner_list;
+                  }
+                  return item.category_id === _this.current_sub_menu;
+                });
+                return filter_data;
+              }
+            },
+            filter_mb_extra_list: function () {
+              //次選單對應之下層選單，手機版使用
+              const extra_list = this.filter_rest_list[this.current_extra_menu];
+              return extra_list ? extra_list.extra_list : [];
+            },
+          },
+          mounted: function () {
+            const _this = this;
+            this.$nextTick(function () {
+              _this.sticky = new Sticky(".sticky");
+              _this.detectWindowWidth();
+              _this.loadMenu(); // 撈選單資料
+              document.addEventListener("click", function (e) {
+                // 選單展開後，點非menu內的物件，即關閉選單
+                const menu = document.getElementById("menu");
+                const menu_outside_click = ~e.composedPath().indexOf(menu) >= 0;
+                if (menu_outside_click) _this.current_main_menu = null;
+              });
+              window.addEventListener(
+                "resize",
+                function () {
+                  // 偵測是否為手機寬度 767
+                  _this.detectWindowWidth();
+                },
+                true
+              );
+            });
+          },
+          methods: {
+            detectWindowWidth: function () {
+              const ori_status = this.isMb;
+              if (window.innerWidth <= 767 && !this.isMb) {
+                this.isMb = true;
+                this.sticky.destroy();
+                this.sticky = new Sticky(".sticky");
+              } else if (window.innerWidth > 767 && this.isMb) {
+                this.isMb = false;
+                this.sticky.destroy();
+                this.sticky = new Sticky(".sticky");
+              }
+              this.show_menu_scroll = this.menu_width > window.innerWidth - 40;
+              console.log(this.show_menu_scroll);
+            },
+            loadMenu: function () {
+              const main = axios.get("assets/json/find_main_list.json");
+              const sub = axios.get("assets/json/find_sub_list.json");
+              const extra = axios.get("assets/json/find_extra_list.json");
+              const _this = this;
 
-          <!-- 右側內容 -->
-          <div id="detail" class="col-lg-10 col-md-9" v-if="productData">
-            <div class="bread">
-              <a href="#">首頁</a>
-              <span>></span>
-              <a href="#" class="mb_shorten">{{ productData.info.category_name}}</a>
-              <span>></span>
-              <a href="#" class="mb_shorten">{{ productData.info.category_sub_name }}</a>
-              <span>></span>
-              <a href="#" class="active">{{ productData.info.category_extra_name }}</a>
+              axios
+                .all([main, sub, extra])
+                .then(
+                  axios.spread(function (...responses) {
+                    const { data: main_list } = responses[0];
+                    const { data: sub_list } = responses[1];
+                    const { data: extra_list } = responses[2];
+                    _this.main_list = main_list;
+                    _this.sub_list = sub_list;
+                    _this.extra_list = extra_list;
+                    _this.menu_width = _this.main_list.length * 80; // 選單總寬度
+                  })
+                )
+                .catch(function (errors) {
+                  console.error(errors);
+                  // react on errors.
+                });
+            },
+            menuHandler: function (menuType, index, id) {
+              // 選單切換
+              switch (menuType) {
+                case "current_main_menu":
+                  {
+                    this[menuType] = index;
+                    this.current_sub_menu = id;
+                  }
+                  break;
+                case "current_sub_menu":
+                  {
+                    this.current_extra_menu = index;
+                  }
+                  break;
+              }
+            },
+            mouseLeave: function () {
+              // this.current_main_menu = null;
+            },
+            hanleSubWidth: function (sub_item) {
+              const listBreakLine = parseInt(sub_item.extra_list.length / 11);
+              return 140 + 140 * listBreakLine;
+            },
+          },
+        });
+      </script>
+      <style>
+        #menu {
+          position: fixed;
+          top: 90px;
+        }
+
+        @media (max-width: 768px) {
+          #menu {
+            top: 60px;
+          }
+        }
+      </style>
+      <!-- menu結束 -->
+
+      <!-- 以下產品content始 -->
+      <div id="product">
+        <div class="container">
+          <div class="row">
+            <!-- 左側選單，pc版關閉 -->
+            <div
+              id="tab_list"
+              class="col-lg-2 col-md-3 d-none d-md-block"
+              v-if="productData"
+            >
+              <h4>產品分類</h4>
+              <ul>
+                <li
+                  v-for="(item, index) in main_list"
+                  :class="{'active':current_main_menu === index}"
+                  @click="menuHandler('current_main_menu', index, item.category_id)"
+                >
+                  <h3>{{ item.category_name }}</h3>
+                  <ul class="sub_ul">
+                    <li v-for="(sub_item, idx) in filter_rest_list">
+                      <h5
+                        :class="{'active': current_extra_menu === idx}"
+                        @click="menuHandler('current_sub_menu', idx)"
+                      >
+                        {{ sub_item.category_sub_name }}
+                      </h5>
+                      <ul class="extra_ul" v-if="current_extra_menu === idx">
+                        <li v-for="extra_item in filter_mb_extra_list">
+                          <a
+                            href="#"
+                            :class="{'active': productData.info.category_extra_id === extra_item.category_extra_id}"
+                            >{{ extra_item.category_extra_name}}</a
+                          >
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
             </div>
-            <div class="row flex">
-              <div class="col-md-4 detail_img">
-                <!-- pc圖片手刻，boostrap沒有三圖輪播 (4版有) -->
-                <div class="img_wrapper d-none d-md-block">
-                  <div class="main_view">
-                    <img :src="productData.info.product_img_array[current_img]" width="100%" alt="" />
-                  </div>
-                  <div class="img_nav">
-                    <div class="for_scroll" :style="{'width':img_nav_width+ 'px', 'margin-left': slider_left+'px' }">
-                      <img v-for="(slide,idx) in productData.info.product_img_array" :src="slide"
-                        :class="{'active':idx === current_img}" :style="{'width': pic_width + 'px' }"
-                        @click="imgHandler(idx, 'direct')" width="100%" alt="" />
-                    </div>
 
-                    <a href="javascript:;" class="arrow right" @click="imgHandler(1, 'arrow')"><img
-                        src="assets/images/arrow_right.png" width="100%" alt="" /></a>
-                    <a href="javascript:;" class="arrow left" @click="imgHandler(-1, 'arrow')"><img
-                        src="assets/images/arrow_left.png" width="100%" alt="" /></a>
-                  </div>
-                </div>
-
-                <!-- m版，boostrap輪播 -->
-                <div id="carousel5" class="carousel_type carousel slide d-md-none" data-ride="carousel"
-                  data-interval="4000" v-if="productData">
-                  <div class="carousel-inner container">
-                    <div class="carousel-item" :class="{'active': idx == 0 }"
-                      v-for="(slide,idx) in productData.info.product_img_array">
-                      <img :src="slide" class="w-100" />
-                    </div>
-                    <a class="carousel-control-prev" href="#carousel5" role="button" data-slide="prev">
-                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                      <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carousel5" role="button" data-slide="next">
-                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                      <span class="sr-only">Next</span>
-                    </a>
-                    <ol class="carousel-indicators">
-                      <li data-target="#carousel5" v-for="(slide,idx) in productData.info.product_img_array"
-                        :data-slide-to="idx" :class="{'active': idx === 0 }"></li>
-                    </ol>
-                  </div>
-                </div>
+            <!-- 右側內容 -->
+            <div id="detail" class="col-lg-10 col-md-9" v-if="productData">
+              <div class="bread">
+                <a href="#">首頁</a>
+                <span>></span>
+                <a href="#" class="mb_shorten"
+                  >{{ productData.info.category_name}}</a
+                >
+                <span>></span>
+                <a href="#" class="mb_shorten"
+                  >{{ productData.info.category_sub_name }}</a
+                >
+                <span>></span>
+                <a href="#" class="active"
+                  >{{ productData.info.category_extra_name }}</a
+                >
               </div>
-              <div class="col-md-8 detail_content">
-                <h3>{{ productData.info.product_name }}</h3>
-                <p>{{ productData.info.product_mini_info }}</p>
-                <div class="info">
-                  <span class="f_orange">倒數搶購</span>
-                  <span class="f_grey suggest_price">原價
-                    <span>{{productData.info.product_suggest_price}}</span></span>
-                  <span>現省<span>{{ productData.info.product_suggest_price -
-                        productData.info.product_selling_price}}</span></span>
-                  <h5 class="f_orange price">
-                    {{productData.info.product_selling_price}}
-                  </h5>
-                </div>
-                <div class="btn_area">
-                  <div class="row">
-                    <div class="col-lg-5 col-md-6 col-6">
-                      <div class="count">
-                        <button>-</button>
-                        <input type="text" value="888" />
-                        <button>+</button>
+              <div class="row flex">
+                <div class="col-md-4 detail_img">
+                  <!-- pc圖片手刻，boostrap沒有三圖輪播 (4版有) -->
+                  <div class="img_wrapper d-none d-md-block">
+                    <div class="main_view">
+                      <img
+                        :src="productData.info.product_img_array[current_img]"
+                        width="100%"
+                        alt=""
+                      />
+                    </div>
+                    <div class="img_nav">
+                      <div
+                        class="for_scroll"
+                        :style="{'width':img_nav_width+ 'px', 'margin-left': slider_left+'px' }"
+                      >
+                        <img
+                          v-for="(slide,idx) in productData.info.product_img_array"
+                          :src="slide"
+                          :class="{'active':idx === current_img}"
+                          :style="{'width': pic_width + 'px' }"
+                          @click="imgHandler(idx, 'direct')"
+                          width="100%"
+                          alt=""
+                        />
                       </div>
-                      <button class="W100 buy">直接購買</button>
+
+                      <a
+                        href="javascript:;"
+                        class="arrow right"
+                        @click="imgHandler(1, 'arrow')"
+                        ><img
+                          src="assets/images/arrow_right.png"
+                          width="100%"
+                          alt=""
+                      /></a>
+                      <a
+                        href="javascript:;"
+                        class="arrow left"
+                        @click="imgHandler(-1, 'arrow')"
+                        ><img
+                          src="assets/images/arrow_left.png"
+                          width="100%"
+                          alt=""
+                      /></a>
                     </div>
-                    <div class="col-lg-5 col-md-6 col-6">
-                      <button class="W100 fav">加入最愛</button>
-                      <button class="W100 cart">加入購物車</button>
+                  </div>
+
+                  <!-- m版，boostrap輪播 -->
+                  <div
+                    id="carousel5"
+                    class="carousel_type carousel slide d-md-none"
+                    data-ride="carousel"
+                    data-interval="4000"
+                    v-if="productData"
+                  >
+                    <div class="carousel-inner container">
+                      <div
+                        class="carousel-item"
+                        :class="{'active': idx == 0 }"
+                        v-for="(slide,idx) in productData.info.product_img_array"
+                      >
+                        <img :src="slide" class="w-100" />
+                      </div>
+                      <a
+                        class="carousel-control-prev"
+                        href="#carousel5"
+                        role="button"
+                        data-slide="prev"
+                      >
+                        <span
+                          class="carousel-control-prev-icon"
+                          aria-hidden="true"
+                        ></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                      <a
+                        class="carousel-control-next"
+                        href="#carousel5"
+                        role="button"
+                        data-slide="next"
+                      >
+                        <span
+                          class="carousel-control-next-icon"
+                          aria-hidden="true"
+                        ></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                      <ol class="carousel-indicators">
+                        <li
+                          data-target="#carousel5"
+                          v-for="(slide,idx) in productData.info.product_img_array"
+                          :data-slide-to="idx"
+                          :class="{'active': idx === 0 }"
+                        ></li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8 detail_content">
+                  <h3>{{ productData.info.product_name }}</h3>
+                  <p>{{ productData.info.product_mini_info }}</p>
+                  <div class="info">
+                    <span class="f_orange">倒數搶購</span>
+                    <span class="f_grey suggest_price"
+                      >原價
+                      <span
+                        >{{productData.info.product_suggest_price}}</span
+                      ></span
+                    >
+                    <span
+                      >現省<span
+                        >{{ productData.info.product_suggest_price -
+                        productData.info.product_selling_price}}</span
+                      ></span
+                    >
+                    <h5 class="f_orange price">
+                      {{productData.info.product_selling_price}}
+                    </h5>
+                  </div>
+                  <div class="btn_area">
+                    <div class="row">
+                      <div class="col-lg-5 col-md-6 col-6">
+                        <div class="count">
+                          <button>-</button>
+                          <input type="text" value="888" />
+                          <button>+</button>
+                        </div>
+                        <button class="W100 buy">直接購買</button>
+                      </div>
+                      <div class="col-lg-5 col-md-6 col-6">
+                        <button class="W100 fav">加入最愛</button>
+                        <button class="W100 cart">加入購物車</button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-12">
-                <p class="title" id="showFixedBtnItem">詳細介紹</p>
-                <!-- 使用v-html，內容tag若有問題，footer會顯示不出來 -->
-                <div class="des" v-html="productData.info.product_full_info"></div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <p class="title" id="showFixedBtnItem">詳細介紹</p>
+                  <!-- 使用v-html，內容tag若有問題，footer會顯示不出來 -->
+                  <div
+                    class="des"
+                    v-html="productData.info.product_full_info"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div
+          class="fixed_btn position-fixed"
+          :class="{'active': showFixedItem}"
+        >
+          <button class="buy">
+            <img src="assets/images/buy.png" class="d-none d-md-block" /><span
+              >直接<br class="d-none d-md-block" />購買</span
+            >
+          </button>
+          <button class="cart">
+            <img src="assets/images/cart.png" class="d-none d-md-block" /><span
+              >加入<br class="d-none d-md-block" />購物車</span
+            >
+          </button>
+          <button class="goTop" @click="goToTop">
+            <img src="assets/images/top.png" /><span class="d-none d-md-block"
+              >回到<br />頂端</span
+            >
+          </button>
+        </div>
       </div>
-      <div class="fixed_btn position-fixed" :class="{'active': showFixedItem}">
-        <button class="buy">
-          <img src="assets/images/buy.png" class="d-none d-md-block" /><span>直接<br class="d-none d-md-block" />購買</span>
-        </button>
-        <button class="cart">
-          <img src="assets/images/cart.png" class="d-none d-md-block" /><span>加入<br
-              class="d-none d-md-block" />購物車</span>
-        </button>
-        <button class="goTop" @click="goToTop">
-          <img src="assets/images/top.png" /><span class="d-none d-md-block">回到<br />頂端</span>
-        </button>
-      </div>
-    </div>
-    <script type="text/babel">
-      var wrapper = new Vue({
-        el: "#product",
-        data: {
-          productData: null,
-          main_list: [],
-          sub_list: [],
-          extra_list: [],
-          current_main_menu: 0,
-          current_sub_menu: "", // category_id
-          current_extra_menu: 0, // category_sub_id
-          current_nav: 0,
-          current_img: 0,
-          slider_left: 0,
-          img_nav_width: 0,
-          slide_nav_width: 81.6,  // 總寬408 共五個元件 => 408/5 = 81.6 
-          showFixedItemVal: 0,
-          showFixedItem: false,
-        },
-        created() {
-          this.product();
-          this.loadLeftNav();
-        },
-        mounted() {
-          var _this = this;
-
-          this.loadAndPop();
-          // 上下頁照params改動
-          window.onpopstate = function () {
-            _this.loadAndPop();
-          };
-          this.$nextTick(function () {
-            window.addEventListener(
-              "resize",
-              function () {
-                // 偵測是否為手機寬度 767
-                _this.detectSliderWidth();
-              },
-              true
-            );
-            window.addEventListener(
-              "scroll",
-              function () {
-                // 偵測手機是否要顯示下方fixed btn
-                _this.detectScrollVal();
-              },
-              true
-            );
-            setTimeout(function () {
-              _this.detectSliderWidth();
-            }, 200);
-          });
-        },
-        computed: {
-          filter_rest_list: function () {
-            const _this = this;
-            if (this.sub_list) {
-              const filter_data = this.sub_list.filter(function (item) {
-                const inner_list = _this.extra_list.filter(function (extra) {
-                  return extra.category_sub_id === item.category_sub_id;
-                });
-                if (item.category_id === _this.current_sub_menu) {
-                  // 把對應extra_list塞入sub_list
-                  item["extra_list"] = inner_list;
-                }
-                return item.category_id === _this.current_sub_menu;
-              });
-              console.log(filter_data);
-              return filter_data;
-            }
+      <script type="text/babel">
+        var wrapper = new Vue({
+          el: "#product",
+          data: {
+            productData: null,
+            main_list: [],
+            sub_list: [],
+            extra_list: [],
+            current_main_menu: 0,
+            current_sub_menu: "", // category_id
+            current_extra_menu: 0, // category_sub_id
+            current_nav: 0,
+            current_img: 0,
+            slider_left: 0,
+            img_nav_width: 0,
+            slide_nav_width: 81.6, // 總寬408 共五個元件 => 408/5 = 81.6
+            showFixedItemVal: 0,
+            showFixedItem: false,
           },
-          filter_mb_extra_list: function () {
-            //次選單對應之下層選單，手機版使用
-            const extra_list = this.filter_rest_list[this.current_extra_menu];
-            return extra_list ? extra_list.extra_list : [];
+          created() {
+            this.product();
+            this.loadLeftNav();
           },
-          pic_width() {
-            const marginLeftRight = (window.innerWidth >= 1280)? 18 : 10
-            return this.slide_nav_width - marginLeftRight;  //margin左右各9 
-          }
-        },
-        methods: {
-          goToTop: function () {
-            window.scrollTo(0, 0);
-          },
-          offset: function (el) {
-            var rect = el.getBoundingClientRect(),
-              scrollLeft =
-              window.pageXOffset || document.documentElement.scrollLeft,
-              scrollTop =
-              window.pageYOffset || document.documentElement.scrollTop;
-            return {
-              top: rect.top + scrollTop,
-              left: rect.left + scrollLeft,
-            };
-          },
-          detectScrollVal: function (e) {
-            const _windowTop = window.pageYOffset;
-            if (_windowTop + 105 >= this.showFixedItemVal) {
-              this.showFixedItem = true;
-            } else {
-              this.showFixedItem = false;
-            }
-          },
-          detectSliderWidth: function () {
-            if (window.innerWidth >= 1280) {
-              this.slide_nav_width = 81.6; // 總寬408 共五個元件 => 408/5 = 81.6
-            } else {
-              this.slide_nav_width = 60; // 總寬180 共三個元件 => 180/3 = 70
-            }
-            this.showFixedItemVal = this.offset(
-              document.getElementById("showFixedBtnItem")
-            ).top;
-          },
-          product: function () {
+          mounted() {
             var _this = this;
-            axios({
-              method: "get",
-              url: "assets/json/product.json",
-              responseType: "json",
-            }).then(function (data) {
-              const {
-                data: product_data,
-                status
-              } = data;
-              if (status == 200) {
-                console.log(product_data.info.category_extra_id);
-                _this.productData = product_data;
-                _this.img_nav_width =
-                  _this.productData.info.product_img_array.length *
-                  _this.slide_nav_width;
-              } else {}
+
+            this.loadAndPop();
+            // 上下頁照params改動
+            window.onpopstate = function () {
+              _this.loadAndPop();
+            };
+            this.$nextTick(function () {
+              window.addEventListener(
+                "resize",
+                function () {
+                  // 偵測是否為手機寬度 767
+                  _this.detectSliderWidth();
+                },
+                true
+              );
+              window.addEventListener(
+                "scroll",
+                function () {
+                  // 偵測手機是否要顯示下方fixed btn
+                  _this.detectScrollVal();
+                },
+                true
+              );
+              setTimeout(function () {
+                _this.detectSliderWidth();
+              }, 200);
             });
           },
-          loadLeftNav: function () {
-            const main = axios.get("assets/json/find_main_list.json");
-            const sub = axios.get("assets/json/find_sub_list.json");
-            const extra = axios.get("assets/json/find_extra_list.json");
-            const _this = this;
-            axios
-              .all([main, sub, extra])
-              .then(
-                axios.spread(function (...responses) {
-                  const {
-                    data: main_list
-                  } = responses[0];
-                  const {
-                    data: sub_list
-                  } = responses[1];
-                  const {
-                    data: extra_list
-                  } = responses[2];
-                  _this.main_list = main_list;
-                  _this.sub_list = sub_list;
-                  _this.extra_list = extra_list;
-                })
-              )
-              .catch(function (errors) {
-                console.error(errors);
-                // react on errors.
-              });
-          },
-          menuHandler: function (menuType, index, id) {
-            // 選單切換
-            switch (menuType) {
-              case "current_main_menu": {
-                this[menuType] = index;
-                this.current_sub_menu = id;
+          computed: {
+            filter_rest_list: function () {
+              const _this = this;
+              if (this.sub_list) {
+                const filter_data = this.sub_list.filter(function (item) {
+                  const inner_list = _this.extra_list.filter(function (extra) {
+                    return extra.category_sub_id === item.category_sub_id;
+                  });
+                  if (item.category_id === _this.current_sub_menu) {
+                    // 把對應extra_list塞入sub_list
+                    item["extra_list"] = inner_list;
+                  }
+                  return item.category_id === _this.current_sub_menu;
+                });
+                console.log(filter_data);
+                return filter_data;
               }
-              break;
-            case "current_sub_menu": {
-              this.current_extra_menu = index;
-            }
-            break;
-            }
+            },
+            filter_mb_extra_list: function () {
+              //次選單對應之下層選單，手機版使用
+              const extra_list = this.filter_rest_list[this.current_extra_menu];
+              return extra_list ? extra_list.extra_list : [];
+            },
+            pic_width() {
+              const marginLeftRight = window.innerWidth >= 1280 ? 18 : 10;
+              return this.slide_nav_width - marginLeftRight; //margin左右各9
+            },
           },
-          tabHandler: function (tab, index) {
-            // console.log(tab, index);
-            this[tab] = index;
-          },
-          loadAndPop: function () {
-            var _this = this;
-            var _isUrlClear = allFunc.getUrlParam("category_id");
-            // _this.slide();
-            _this.product();
+          methods: {
+            goToTop: function () {
+              window.scrollTo(0, 0);
+            },
+            offset: function (el) {
+              var rect = el.getBoundingClientRect(),
+                scrollLeft =
+                  window.pageXOffset || document.documentElement.scrollLeft,
+                scrollTop =
+                  window.pageYOffset || document.documentElement.scrollTop;
+              return {
+                top: rect.top + scrollTop,
+                left: rect.left + scrollLeft,
+              };
+            },
+            detectScrollVal: function (e) {
+              const _windowTop = window.pageYOffset;
+              if (_windowTop + 105 >= this.showFixedItemVal) {
+                this.showFixedItem = true;
+              } else {
+                this.showFixedItem = false;
+              }
+            },
+            detectSliderWidth: function () {
+              if (window.innerWidth >= 1280) {
+                this.slide_nav_width = 81.6; // 總寬408 共五個元件 => 408/5 = 81.6
+              } else {
+                this.slide_nav_width = 60; // 總寬180 共三個元件 => 180/3 = 70
+              }
+              this.showFixedItemVal = this.offset(
+                document.getElementById("showFixedBtnItem")
+              ).top;
+            },
+            product: function () {
+              var _this = this;
+              axios({
+                method: "get",
+                url: "assets/json/product.json",
+                responseType: "json",
+              }).then(function (data) {
+                const { data: product_data, status } = data;
+                if (status == 200) {
+                  console.log(product_data.info.category_extra_id);
+                  _this.productData = product_data;
+                  _this.img_nav_width =
+                    _this.productData.info.product_img_array.length *
+                    _this.slide_nav_width;
+                } else {
+                }
+              });
+            },
+            loadLeftNav: function () {
+              const main = axios.get("assets/json/find_main_list.json");
+              const sub = axios.get("assets/json/find_sub_list.json");
+              const extra = axios.get("assets/json/find_extra_list.json");
+              const _this = this;
+              axios
+                .all([main, sub, extra])
+                .then(
+                  axios.spread(function (...responses) {
+                    const { data: main_list } = responses[0];
+                    const { data: sub_list } = responses[1];
+                    const { data: extra_list } = responses[2];
+                    _this.main_list = main_list;
+                    _this.sub_list = sub_list;
+                    _this.extra_list = extra_list;
+                  })
+                )
+                .catch(function (errors) {
+                  console.error(errors);
+                  // react on errors.
+                });
+            },
+            menuHandler: function (menuType, index, id) {
+              // 選單切換
+              switch (menuType) {
+                case "current_main_menu":
+                  {
+                    this[menuType] = index;
+                    this.current_sub_menu = id;
+                  }
+                  break;
+                case "current_sub_menu":
+                  {
+                    this.current_extra_menu = index;
+                  }
+                  break;
+              }
+            },
+            tabHandler: function (tab, index) {
+              // console.log(tab, index);
+              this[tab] = index;
+            },
+            loadAndPop: function () {
+              var _this = this;
+              var _isUrlClear = allFunc.getUrlParam("category_id");
+              // _this.slide();
+              _this.product();
 
-            function afterMainLoad() {
-              // if( _isUrlClear == "" || _isUrlClear == null){
-              // 網址不帶params。隨機
-              // var _length = _this.category.main.length-1;
-              // var _getRandom = allFunc.randomFunc(0,_length);
-              // _this.category.active = {
-              //     main : _this.category.main[_getRandom].category_id,
-              //     sub : null,
-              //     extra : null,
-              // }
-              // window.history.pushState({},0,'category/' + '?category_id=' + _this.category.active.main);
-              // }else{
-              // _this.category.active = {
-              //     main : allFunc.getUrlParam("category_id"),
-              //     sub : allFunc.getUrlParam("category_sub_id"),
-              //     extra : allFunc.getUrlParam("category_extra_id"),
-              // }
-              // }
-              // 如果sub在：呼叫sub跟extra
-              // 如果sub不在：呼叫sub
-              // console.log(_this.category.active["sub"])
-              // if( _this.category.active["sub"] == undefined || _this.category.active["sub"] == null ){
-              //     // 如果sub不在
-              //     _this.list_sub(_this.category.active["main"]);
-              // }else{
-              //     // 如果sub在
-              //     _this.list_sub(_this.category.active["main"]);
-              //     _this.list_extra(_this.category.active["sub"]);
-              // }
-              // 呼叫商品列表
-              // _this.product_list()
-            }
-          },
-          imgHandler: function (add_slide, type) {
-            if (type === "direct") {
-              this.current_img = add_slide;
-              return;
-            }
-            let new_current = this.current_img + add_slide;
-            if (new_current < 0) {
-              new_current = 0;
-            } else if (
-              new_current >= this.productData.info.product_img_array.length
-            ) {
-              new_current = new_current - 1;
-            } else {
-              new_current = new_current;
-            }
-            this.current_img = new_current;
+              function afterMainLoad() {
+                // if( _isUrlClear == "" || _isUrlClear == null){
+                // 網址不帶params。隨機
+                // var _length = _this.category.main.length-1;
+                // var _getRandom = allFunc.randomFunc(0,_length);
+                // _this.category.active = {
+                //     main : _this.category.main[_getRandom].category_id,
+                //     sub : null,
+                //     extra : null,
+                // }
+                // window.history.pushState({},0,'category/' + '?category_id=' + _this.category.active.main);
+                // }else{
+                // _this.category.active = {
+                //     main : allFunc.getUrlParam("category_id"),
+                //     sub : allFunc.getUrlParam("category_sub_id"),
+                //     extra : allFunc.getUrlParam("category_extra_id"),
+                // }
+                // }
+                // 如果sub在：呼叫sub跟extra
+                // 如果sub不在：呼叫sub
+                // console.log(_this.category.active["sub"])
+                // if( _this.category.active["sub"] == undefined || _this.category.active["sub"] == null ){
+                //     // 如果sub不在
+                //     _this.list_sub(_this.category.active["main"]);
+                // }else{
+                //     // 如果sub在
+                //     _this.list_sub(_this.category.active["main"]);
+                //     _this.list_extra(_this.category.active["sub"]);
+                // }
+                // 呼叫商品列表
+                // _this.product_list()
+              }
+            },
+            imgHandler: function (add_slide, type) {
+              if (type === "direct") {
+                this.current_img = add_slide;
+                return;
+              }
+              let new_current = this.current_img + add_slide;
+              if (new_current < 0) {
+                new_current = 0;
+              } else if (
+                new_current >= this.productData.info.product_img_array.length
+              ) {
+                new_current = new_current - 1;
+              } else {
+                new_current = new_current;
+              }
+              this.current_img = new_current;
 
-            if (new_current >= 3) {
-              this.slider_left = -this.slide_nav_width * (new_current - 2);
-              console.log(this.slider_left);
-            } else {
-              this.slider_left = 0;
-            }
+              if (new_current >= 3) {
+                this.slider_left = -this.slide_nav_width * (new_current - 2);
+                console.log(this.slider_left);
+              } else {
+                this.slider_left = 0;
+              }
+            },
           },
-        },
-      });
-    </script>
-    <!-- 產品content結束 -->
+        });
+      </script>
+      <!-- 產品content結束 -->
 
-    <!-- footer php include -->
-    <div id="footer">
-      <div class="container mt-5 pt-4 clearfix">
-        <div class="index-for5 mb-4">
-          <h2 class="mb-3">關於我們</h2>
-          <ul>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">7YAGO福利網</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">招募供應商</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">機構團體加入</a>
-            </li>
-          </ul>
+      <!-- footer php include -->
+      <div id="footer">
+        <div class="container mt-5 pt-4 clearfix">
+          <div class="index-for5 mb-4">
+            <h2 class="mb-3">關於我們</h2>
+            <ul>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >7YAGO福利網</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >招募供應商</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >機構團體加入</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="index-for5 mb-4">
+            <h2 class="mb-3">專屬服務</h2>
+            <ul>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >大宗採購方案</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >年節禮品採購</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >異業合作</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="index-for5 mb-4">
+            <h2 class="mb-3">會員權益</h2>
+            <ul>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >隱私權政策</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >電子商務條款</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="index-for5 mb-4">
+            <h2 class="mb-3">常見問題</h2>
+            <ul>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >訂單出貨流程說明</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >取消訂單/退貨/退款說明</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >購物金使用說明</a
+                >
+              </li>
+              <li>
+                <a href="http://" target="_blank" rel="noopener noreferrer"
+                  >聯絡我們</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="index-for5 mb-4">
+            <h2 class="mb-3">隨身好助理</h2>
+            <img src="assets/images/qrcode.png" alt="" class="img-fluid w-75" />
+          </div>
         </div>
-        <div class="index-for5 mb-4">
-          <h2 class="mb-3">專屬服務</h2>
-          <ul>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">大宗採購方案</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">年節禮品採購</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">異業合作</a>
-            </li>
-          </ul>
+        <div class="text-center pb-3">
+          <p class="m-0">
+            <small>吉品養生股份有限公司 2020 ALL Rights Reserved</small>
+          </p>
+          <p>
+            <small class="m-0"
+              >台北市忠孝東路四段212號10樓。客服信箱：service@yonglinfarm.net</small
+            >
+          </p>
         </div>
-        <div class="index-for5 mb-4">
-          <h2 class="mb-3">會員權益</h2>
-          <ul>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">隱私權政策</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">電子商務條款</a>
-            </li>
-          </ul>
-        </div>
-        <div class="index-for5 mb-4">
-          <h2 class="mb-3">常見問題</h2>
-          <ul>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">訂單出貨流程說明</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">取消訂單/退貨/退款說明</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">購物金使用說明</a>
-            </li>
-            <li>
-              <a href="http://" target="_blank" rel="noopener noreferrer">聯絡我們</a>
-            </li>
-          </ul>
-        </div>
-        <div class="index-for5 mb-4">
-          <h2 class="mb-3">隨身好助理</h2>
-          <img src="assets/images/qrcode.png" alt="" class="img-fluid w-75" />
-        </div>
-      </div>
-      <div class="text-center pb-3">
-        <p class="m-0">
-          <small>吉品養生股份有限公司 2020 ALL Rights Reserved</small>
-        </p>
-        <p>
-          <small class="m-0">台北市忠孝東路四段212號10樓。客服信箱：service@yonglinfarm.net</small>
-        </p>
       </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>
